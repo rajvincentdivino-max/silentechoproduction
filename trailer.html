@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EERIE - Series Concept</title>
+    <style>
+        /* Base Reset & Variables */
+        :root {
+            --primary: #e50914; /* Cinematic Red */
+            --bg-color: #08080a;
+            --text-main: #f0f0f0;
+            --text-muted: #a0a0a0;
+            --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1050px;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            background: #151517;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+        .navbar.scrolled {
+            top: 0.5rem;
+            background: rgba(21, 21, 23, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .nav-brand {
+            display: none; /* Hidden to match the new icon-focused design */
+        }
+        .nav-links {
+            display: flex;
+            gap: 3.5rem;
+            align-items: center;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            transition: stroke 0.3s;
+        }
+        .nav-item:hover {
+            color: var(--primary);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+
+        /* Hero / Poster Section */
+        .poster-container {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            /* Placeholder background simulating a dark, eerie cinematic poster */
+            background: 
+                linear-gradient(to right, rgba(8, 8, 10, 0.95) 10%, rgba(8, 8, 10, 0.6) 50%, rgba(8, 8, 10, 0.95) 90%),
+                url('https://images.unsplash.com/photo-1505635552518-3448ff116af3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, var(--bg-color) 0%, transparent 60%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .content-grid {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem 3rem 2rem;
+            flex-grow: 1;
+            align-items: center;
+        }
+
+        /* Left Panel - Typography & Info */
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .series-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -2px;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .info-block {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .mini-poster {
+            display: none; /* Hidden on desktop, shown on mobile if needed */
+        }
+
+        .details-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1.2rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .quality-badge {
+            border: 1px solid var(--text-muted);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .synopsis {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #d0d0d0;
+            max-width: 650px;
+        }
+
+        .genres {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .genre-pill {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(4px);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Buttons */
+        .actions-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .primary-play-btn {
+            background: var(--text-main);
+            color: black;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .primary-play-btn svg { width: 24px; height: 24px; fill: black; }
+        .primary-play-btn:hover { background: rgba(255, 255, 255, 0.8); transform: scale(1.05); }
+
+        .icon-btn {
+            background: rgba(40, 40, 40, 0.6);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .icon-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+        .icon-btn:hover { background: rgba(80, 80, 80, 0.8); }
+        .icon-btn.active { border-color: var(--text-main); }
+        .icon-btn.active svg { fill: white; }
+
+        /* Right Panel - Credits */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            align-items: flex-end;
+        }
+
+        .credits-corner {
+            background: rgba(20, 20, 25, 0.7);
+            padding: 2rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05);
+            text-align: left;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .credit-group {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .credit-group:last-child { margin-bottom: 0; }
+        .credit-group b {
+            display: block;
+            color: white;
+            margin-top: 4px;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .comments-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .comment-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            color: white;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 60px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .comment-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .post-btn {
+            background: var(--primary);
+            color: white;
+            padding: 0 2rem;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            border: none;
+        }
+
+        .post-btn:hover:not(:disabled) { background: #b80710; }
+        .post-btn:disabled { background: #444; color: #777; cursor: not-allowed; }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .comment-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            transition: transform 0.2s ease;
+        }
+        
+        .comment-item:hover { transform: translateX(5px); }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .comment-author-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .comment-author { font-weight: bold; color: white; font-size: 1.05rem; }
+        .comment-text { line-height: 1.6; color: #d5d5d5; }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            transition: opacity 0.3s;
+        }
+        .delete-btn:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+
+        /* Footer Section */
+        .site-footer {
+            background: #040405;
+            padding: 5rem 3rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-brand h2 { margin: 0 0 1rem 0; color: var(--primary); font-size: 2rem; }
+        .footer-text { color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; }
+        
+        .footer-socials { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .social-icon {
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; transition: 0.3s;
+        }
+        .social-icon:hover { background: var(--primary); transform: translateY(-3px); }
+        .social-icon svg { width: 18px; height: 18px; fill: currentColor; }
+
+        .footer-heading { margin: 0 0 1.5rem 0; font-size: 1.2rem; font-weight: 600; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 1rem; }
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: 0.3s;
+            display: block;
+        }
+        .footer-links a:hover { color: var(--primary); padding-left: 8px; }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Audio Toggle Button */
+        .audio-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 24px;
+            border-radius: 30px;
+            backdrop-filter: blur(8px);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .audio-toggle:hover {
+            background: rgba(229, 9, 20, 0.8);
+            border-color: rgba(229, 9, 20, 1);
+        }
+
+        /* --- User Provided Mobile Overrides --- */
+        @media (max-width: 900px) {
+            /* Mobile Navbar */
+            .navbar { 
+                top: 0;
+                left: 0;
+                transform: none;
+                width: 100%;
+                max-width: 100%;
+                border-radius: 0;
+                border: none;
+                justify-content: space-between;
+                padding: 1rem 1.5rem; 
+            }
+            .navbar.scrolled { 
+                top: 0; 
+                padding: 1rem 1.5rem; 
+            }
+            .hamburger { display: block; }
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #151517;
+                flex-direction: column;
+                padding: 1.5rem;
+                gap: 1.5rem;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+                display: none;
+                align-items: flex-start;
+            }
+            .nav-links.show { display: flex; }
+            .nav-item {
+                flex-direction: row;
+                font-size: 1rem;
+                gap: 1rem;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+                padding: 4rem 2rem;
+                gap: 3rem;
+            }
+            .right-panel {
+                align-items: flex-start;
+            }
+            .credits-corner { text-align: center; max-width: 100%; }
+
+            /* Center audio button on mobile */
+            .audio-toggle { 
+                bottom: 20px; 
+                right: 50%; 
+                transform: translateX(50%); 
+                width: max-content;
+                font-size: 0.8rem;
+                padding: 10px 20px;
+            }
+
+            /* Mobile Comments */
+            .comments-section { padding: 2rem 1.5rem; }
+            .comment-form { flex-direction: column; }
+            .comment-input { height: 80px; }
+            .post-btn { padding: 15px; }
+
+            /* Mobile Footer */
+            .site-footer {
+                padding: 3rem 1.5rem;
+            }
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2.5rem;
+            }
+            .footer-brand, .footer-links {
+                align-items: center;
+                display: flex;
+                flex-direction: column;
+            }
+            .footer-links a:hover {
+                padding-left: 0; /* disable shift on mobile center align */
+                color: #e50914;
+            }
+            .footer-socials {
+                justify-content: center;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-links" id="navLinks">
+            <a href="index.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                Home
+            </a>
+            <a href="M&R.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><path d="M12 2C7.58 2 4 5.58 4 10c0 2.27 1.05 4.3 2.7 5.64V20c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-4.36C18.95 14.3 20 12.27 20 10c0-4.42-3.58-8-8-8zm-2 17H8v-2h2v2zm4 0h-2v-2h2v2z"></path></svg>
+                M&R
+            </a>
+            <a href="teaser.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                Teaser
+            </a>
+            <a href="story.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                Story Board
+            </a>
+            <a href="behindscene.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><polygon points="1 6 8 2 16 6 23 2 23 18 16 22 8 18 1 22"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+                Behind The Scene
+            </a>
+        </div>
+
+        <div class="hamburger" id="hamburgerMenu">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="white"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </div>
+    </nav>
+
+    <!-- Audio Element -->
+    <audio id="theme-audio" loop>
+        <source src="https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="poster-container">
+        <div class="overlay"></div>
+
+        <div class="content-grid">
+            <!-- Left Side: Main Info -->
+            <div class="left-panel">
+                <div class="series-tag">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#e50914"><path d="M4 6h16v12H4z"/></svg>
+                    TV Series
+                </div>
+
+                <h1>EERIE</h1>
+
+                <div class="info-block">
+                    <!-- Details -->
+                    <div class="details-area">
+                        <div class="meta-row">
+                            <span>2010 - 2017</span>
+                            <span class="quality-badge">TV-14</span>
+                            <span>4 Seasons</span>
+                            <span>Language: English</span>
+                        </div>
+
+                        <p class="synopsis">
+                            Eerie is a Filipino horror film set in a Catholic girls school haunted by disturbing events after the death of a student. Guidance counselor Pat Consolacion investigates the mystery and uncovers the school's dark history of abuse and neglect. With help from the spirit of a former student, she reveals the truth behind the haunting and the consequences of silence and cruelty.
+                        </p>
+
+                        <div class="genres">
+                            <div class="genre-pill">Supernatural</div>
+                            <div class="genre-pill">Horror</div>
+                            <div class="genre-pill">Mystery</div>
+                        </div>
+
+                        <div class="actions-row">
+                            <!-- Play Button (Temporary YouTube Link) -->
+                            <button class="primary-play-btn" onclick="window.open('https://www.youtube.com/watch?v=YE7VzlLtp-4', '_blank')">
+                                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                Play   
+                            </button>
+
+                            <!-- Like Button -->
+                            <button class="icon-btn" id="likeBtn">
+                                <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                Like <span id="likeCount" style="margin-left: 5px;">0</span>
+                            </button>
+                            
+                            <!-- Watchlist Button -->
+                            <button class="icon-btn" onclick="toggleWatchlist(this)">
+                                <svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+                                <span class="btn-text">Add to Watchlist</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Credits -->
+            <div class="right-panel">
+                <div class="credits-corner">
+                    <div class="credit-group">
+                        Creators:
+                        <b>Silentechoproduction</b>
+                    </div>
+                    <div class="credit-group">
+                        Starring:
+                        <b>Niña Villarojo, Sabrina Lopez, Jymerah Estestes, Elthon Cabastante</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <!-- COMMENT SECTION -->
+    <div class="comments-section">
+        <h2 class="comments-title">Audience Reviews</h2>
+        
+        <div class="comment-form">
+            <textarea id="commentInput" class="comment-input" placeholder="Leave a review or theory..."></textarea>
+            <button id="postCommentBtn" class="post-btn">Post</button>
+        </div>
+
+        <div id="commentsList" class="comments-list">
+            <!-- Comments will be populated here via JavaScript -->
+        </div>
+    </div>
+
+    <!-- FOOTER SECTION -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <!-- Brand / Info -->
+            <div class="footer-brand">
+                <h2>EERIE</h2>
+                <p class="footer-text">
+                    Experience the chills and thrills of Silentecho Production's masterpiece. Dive deep into the mystery that haunts the halls.
+                </p>
+                <div class="footer-socials">
+                    <a href="#" class="social-icon">
+                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="footer-links">
+                <h3 class="footer-heading">Explore</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Cast & Crew</a></li>
+                    <li><a href="#">Behind the Scenes</a></li>
+                    <li><a href="#">Reviews</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>© 2024 Silentecho Production. All Rights Reserved.</span>
+            <span>Designed for Eerie Fans</span>
+        </div>
+    </footer>
+
+    <button class="audio-toggle" id="audioBtn" onclick="toggleAudio()">Play Theme</button>
+
+    <!-- STANDARD SCRIPT FOR AUDIO & WATCHLIST -->
+    <script>
+        // Navbar Scroll & Mobile Menu Logic
+        const navbar = document.getElementById('navbar');
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const navLinks = document.getElementById('navLinks');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        hamburgerMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+        });
+
+        // Audio Logic
+        const audio = document.getElementById('theme-audio');
+        const audioBtn = document.getElementById('audioBtn');
+        const body = document.body;
+        audio.volume = 0.4;
+
+        function toggleAudio() {
+            if (audio.paused) {
+                audio.play();
+                body.classList.add('playing');
+                audioBtn.innerText = "Pause Theme";
+            } else {
+                audio.pause();
+                body.classList.remove('playing');
+                audioBtn.innerText = "Play Theme";
+            }
+        }
+
+        function toggleWatchlist(btn) {
+            btn.classList.toggle('active');
+            const span = btn.querySelector('.btn-text');
+            if (span) {
+                const isAdded = span.innerText.includes('Add');
+                span.innerText = isAdded ? 'In Watchlist' : 'Add to Watchlist';
+            }
+        }
+    </script>
+
+    <!-- FIREBASE REALTIME DATABASE MODULE (REST API) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // User-provided Firebase Realtime Database URL
+            const DB_URL = "https://realtime-bceae-default-rtdb.asia-southeast1.firebasedatabase.app";
+            
+            // --- STATE & USER ID ---
+            let likesCount = 0;
+            let isLiked = false; 
+            let comments = [];
+
+            // Generate or retrieve a local device ID to identify "own" comments
+            let localUserId = localStorage.getItem('eerie_user_id');
+            if (!localUserId) {
+                localUserId = 'user_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('eerie_user_id', localUserId);
+            }
+
+            // --- DOM ELEMENTS ---
+            const likeBtn = document.getElementById("likeBtn");
+            const likeCountElem = document.getElementById("likeCount");
+            const likeSvg = likeBtn.querySelector('svg');
+            
+            const commentInput = document.getElementById("commentInput");
+            const postBtn = document.getElementById("postCommentBtn");
+            const commentsList = document.getElementById("commentsList");
+
+            // --- FIREBASE SYNC FUNCTIONS ---
+            
+            // Fetch likes from DB
+            async function fetchLikes() {
+                try {
+                    const res = await fetch(`${DB_URL}/eerie_movie/likes.json`);
+                    if (!res.ok) throw new Error("Database read denied. Check Firebase rules.");
+                    const data = await res.json();
+                    if (data !== null) {
+                        likesCount = data;
+                        updateLikeUI();
+                    }
+                } catch (e) {
+                    console.error("Error fetching likes:", e);
+                }
+            }
+
+            // Update likes in DB
+            async function updateLikesInDB(newCount) {
+                try {
+                    await fetch(`${DB_URL}/eerie_movie/likes.json`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newCount)
+                    });
+                } catch (e) {
+                    console.error("Error updating likes:", e);
+                }
+            }
+
+            // Fetch comments from DB
+            async function fetchComments() {
+                try {
+                    const res = await fetch(`${DB_URL}/eerie_movie/comments.json`);
+                    const data = await res.json();
+                    if (data) {
+                        comments = Object.entries(data).map(([key, val]) => ({
+                            ...val,
+                            firebaseKey: key
+                        }));
+                    } else {
+                        comments = [];
+                    }
+                    renderComments();
+                    updateCommentLimitUI();
+                } catch (e) {
+                    console.error("Error fetching comments:", e);
+                }
+            }
+
+            // Add comment to DB
+            async function addCommentToDB(commentObj) {
+                try {
+                    await fetch(`${DB_URL}/eerie_movie/comments.json`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(commentObj)
+                    });
+                    await fetchComments(); // Refresh list immediately after posting
+                } catch (e) {
+                    console.error("Error adding comment:", e);
+                }
+            }
+
+            // Delete comment from DB
+            async function deleteCommentFromDB(firebaseKey) {
+                try {
+                    await fetch(`${DB_URL}/eerie_movie/comments/${firebaseKey}.json`, {
+                        method: 'DELETE'
+                    });
+                    await fetchComments();
+                } catch (e) {
+                    console.error("Error deleting comment:", e);
+                }
+            }
+
+            // --- LIKE BUTTON LOGIC ---
+            function updateLikeUI() {
+                likeCountElem.textContent = likesCount;
+                if (isLiked) {
+                    likeBtn.style.color = "#e50914";
+                    likeBtn.style.borderColor = "#e50914";
+                    likeSvg.style.fill = "#e50914";
+                    likeSvg.style.stroke = "#e50914";
+                } else {
+                    likeBtn.style.color = "#fff";
+                    likeBtn.style.borderColor = "rgba(255,255,255,0.2)";
+                    likeSvg.style.fill = "none";
+                    likeSvg.style.stroke = "currentColor";
+                }
+            }
+
+            likeBtn.addEventListener('click', () => {
+                isLiked = !isLiked;
+                likesCount += isLiked ? 1 : -1;
+                updateLikeUI();
+                updateLikesInDB(likesCount);
+            });
+
+            // --- COMMENT SECTION LOGIC ---
+            
+            function updateCommentLimitUI() {
+                const myCommentsCount = comments.filter(c => c.userId === localUserId).length;
+                if (myCommentsCount >= 3) {
+                    postBtn.disabled = true;
+                    postBtn.innerText = "Limit Reached";
+                    commentInput.placeholder = "You've reached the 3-review limit per user.";
+                    commentInput.disabled = true;
+                } else {
+                    postBtn.disabled = false;
+                    postBtn.innerText = "Post";
+                    commentInput.placeholder = "Leave a review or theory...";
+                    commentInput.disabled = false;
+                }
+            }
+
+            function renderComments() {
+                // Ensure list is cleared so they don't stack up visually
+                commentsList.innerHTML = "";
+                
+                if (comments.length === 0) {
+                    commentsList.innerHTML = '<div style="color:#777; font-style:italic;">No reviews yet. Be the first!</div>';
+                    return;
+                }
+
+                // Sort newest first
+                const sortedComments = [...comments].sort((a, b) => b.timestamp - a.timestamp);
+
+                sortedComments.forEach(comment => {
+                    const date = new Date(comment.timestamp);
+                    const timeString = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                    const deleteBtnHtml = comment.userId === localUserId 
+                        ? `<button class="delete-btn" data-key="${comment.firebaseKey}">Delete</button>` 
+                        : '';
+
+                    const item = document.createElement("div");
+                    item.className = "comment-item";
+                    item.innerHTML = `
+                        <div class="comment-header">
+                            <div class="comment-author-info">
+                                <span class="comment-author">${escapeHtml(comment.author)}</span>
+                                <span>${timeString}</span>
+                            </div>
+                            ${deleteBtnHtml}
+                        </div>
+                        <div class="comment-text">${escapeHtml(comment.text)}</div>
+                    `;
+                    commentsList.appendChild(item);
+                });
+            }
+
+            // Event Delegation for Delete Buttons
+            commentsList.addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-btn')) {
+                    const key = e.target.getAttribute('data-key');
+                    if (confirm("Are you sure you want to delete your review?")) {
+                        deleteCommentFromDB(key);
+                    }
+                }
+            });
+
+            postBtn.addEventListener('click', async () => {
+                const text = commentInput.value.trim();
+                if (text === "") return;
+
+                // Final check for the limit before posting
+                const myCommentsCount = comments.filter(c => c.userId === localUserId).length;
+                if (myCommentsCount >= 3) {
+                    alert("You can only post up to 3 comments.");
+                    return;
+                }
+
+                postBtn.disabled = true;
+                postBtn.innerText = "Posting...";
+
+                const newComment = {
+                    id: Date.now(),
+                    userId: localUserId,
+                    author: "Guest Reviewer",
+                    text: text,
+                    timestamp: Date.now()
+                };
+
+                await addCommentToDB(newComment);
+
+                commentInput.value = "";
+                // updateCommentLimitUI will handle button state after fetch
+            });
+
+            // Basic XSS protection helper
+            function escapeHtml(text) {
+                if (!text) return text;
+                return text
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            // Initialize
+            updateLikeUI();
+            fetchLikes();
+            fetchComments();
+            
+            // Poll for updates every 5 seconds to simulate realtime behavior
+            setInterval(() => {
+                fetchLikes();
+                fetchComments();
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

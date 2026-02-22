@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EERIE</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Special+Elite&display=swap');
+
+        /* --- Custom Styles --- */
+        body {
+            background-color: #000;
+            overflow-x: hidden;
+            font-family: 'Special Elite', monospace;
+            cursor: crosshair;
+        }
+
+        .font-horror {
+            font-family: 'Nosifer', cursive;
+        }
+        
+        .font-typewriter {
+            font-family: 'Special Elite', monospace;
+        }
+
+        /* TV Static Background */
+        .tv-static {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            animation: static-noise 0.2s infinite;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        @keyframes static-noise {
+            0% { transform: translateX(0) translateY(0); }
+            10% { transform: translateX(-5%) translateY(5%); }
+            20% { transform: translateX(-10%) translateY(5%); }
+            30% { transform: translateX(5%) translateY(-5%); }
+            40% { transform: translateX(-5%) translateY(15%); }
+            50% { transform: translateX(-10%) translateY(5%); }
+            60% { transform: translateX(15%) translateY(0); }
+            70% { transform: translateX(0) translateY(10%); }
+            80% { transform: translateX(-15%) translateY(0); }
+            90% { transform: translateX(10%) translateY(5%); }
+            100% { transform: translateX(5%) translateY(0); }
+        }
+
+        /* Glitch Text Effect */
+        .glitch-text {
+            position: relative;
+        }
+        
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0c0a09;
+        }
+
+        .glitch-text::before {
+            left: 2px;
+            text-shadow: -1px 0 #ff0000;
+            clip-path: inset(40% 0 61% 0);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        .glitch-text::after {
+            left: -2px;
+            text-shadow: -1px 0 #00ff00;
+            clip-path: inset(10% 0 50% 0);
+            animation: glitch-anim 2.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip-path: inset(10% 0 80% 0); }
+            20% { clip-path: inset(60% 0 10% 0); }
+            40% { clip-path: inset(40% 0 50% 0); }
+            60% { clip-path: inset(80% 0 5% 0); }
+            80% { clip-path: inset(20% 0 60% 0); }
+            100% { clip-path: inset(70% 0 20% 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(80% 0 5% 0); }
+            20% { clip-path: inset(10% 0 70% 0); }
+            40% { clip-path: inset(50% 0 20% 0); }
+            60% { clip-path: inset(20% 0 60% 0); }
+            80% { clip-path: inset(70% 0 10% 0); }
+            100% { clip-path: inset(5% 0 80% 0); }
+        }
+
+        /* Blood Drip Hover */
+        .blood-drip {
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s;
+            display: inline-block;
+        }
+
+        .blood-drip::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #8a0000 70%, transparent 100%);
+            transition: top 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: -1;
+            border-radius: 0 0 15px 15px;
+            opacity: 0.8;
+        }
+
+        .btn-wrapper:hover .blood-drip {
+            color: #ffcccc;
+            text-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
+        }
+
+        .btn-wrapper:hover .blood-drip::after {
+            top: -10px;
+        }
+
+        /* Fog Animation */
+        .fog-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .fog-img {
+            position: absolute;
+            height: 100vh;
+            width: 300vw;
+            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png') repeat-x;
+            background-size: contain;
+            animation: fog 60s linear infinite;
+        }
+        
+        .fog-img-2 {
+            position: absolute;
+            height: 100vh;
+            width: 300vw;
+            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png') repeat-x;
+            background-size: contain;
+            animation: fog 40s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes fog {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-200vw, 0, 0); }
+        }
+
+        /* Button Active States managed by JS classes */
+        .btn-wrapper.active .icon-main {
+            filter: drop-shadow(0 0 10px rgba(220,38,38,0.7));
+            transform: scale(1.25) rotate(6deg);
+            color: #dc2626; 
+        }
+
+        .btn-wrapper.active .icon-ghost {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            opacity: 0.5;
+        }
+        
+        .btn-wrapper.active .scratch-mark {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+
+        .btn-wrapper.active .blood-drip {
+            color: #dc2626;
+        }
+
+        /* Global Flicker Class */
+        .flicker-mode .bg-layer {
+            filter: invert(1);
+        }
+        .flicker-mode h1 {
+            opacity: 0.3;
+        }
+
+        /* Title Flickering Animation */
+        @keyframes flicker-text {
+            0%   { opacity: 1;    text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+            5%   { opacity: 0.3;  text-shadow: none; }
+            10%  { opacity: 1;    text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+            15%  { opacity: 1;    text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+            20%  { opacity: 0.3;  text-shadow: none; }
+            25%  { opacity: 1;    text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+            30%  { opacity: 0.1;  text-shadow: none; }
+            35%  { opacity: 1;    text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+            70%  { opacity: 0.7;  text-shadow: 0 0 10px rgba(185, 28, 28, 0.5); }
+            72%  { opacity: 0.2;  text-shadow: none; }
+            74%  { opacity: 0.9;  text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+            100% { opacity: 0.9;  text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+        }
+        
+        .title-flicker {
+            animation: flicker-text 5s infinite steps(1);
+        }
+        
+        /* Mobile adjustment for nav */
+        @media (max-width: 768px) {
+            .btn-wrapper span {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* --- STICKY NAV TRANSITIONS --- */
+        #sticky-nav .nav-inner,
+        #sticky-nav .btn-wrapper,
+        #sticky-nav .icon-main,
+        #sticky-nav .nav-text,
+        #sticky-nav .nav-bg,
+        #sticky-nav .nav-logo,
+        #sticky-nav .nav-trailer {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-logo {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+
+        .nav-trailer {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        @media (max-width: 768px) {
+            .nav-trailer {
+                padding: 0.5rem 0.75rem !important;
+                font-size: 0.65rem;
+                gap: 0.5rem;
+            }
+        }
+
+        #sticky-nav.scrolled-nav .nav-inner {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+
+        #sticky-nav.scrolled-nav .btn-wrapper {
+            padding: 0.25rem 0.5rem;
+        }
+
+        #sticky-nav.scrolled-nav .icon-main {
+            width: 1.25rem;
+            height: 1.25rem;
+            transform-origin: center;
+        }
+        
+        #sticky-nav.scrolled-nav .icon-ghost {
+            width: 1.25rem; 
+            height: 1.25rem;
+        }
+
+        #sticky-nav.scrolled-nav .nav-text {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-left: 0.5rem;
+        }
+        
+        #sticky-nav.scrolled-nav .nav-bg {
+            background-color: rgba(28, 25, 23, 0.95);
+            border-bottom-color: rgba(127, 29, 29, 0.8);
+        }
+
+        #sticky-nav.scrolled-nav .nav-logo {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            font-size: 1.25rem;
+        }
+
+        #sticky-nav.scrolled-nav .nav-trailer {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        /* Safe area padding for bottom nav */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+</head>
+<body class="selection:bg-red-900 selection:text-white min-h-screen relative">
+
+    <!-- Flashlight / Vignette Effect -->
+    <div id="flashlight" 
+         class="pointer-events-none fixed inset-0 z-50 transition-opacity duration-100"
+         style="background: radial-gradient(circle 1000px at 50% 50%, transparent 20%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.4) 85%);">
+    </div>
+
+    <!-- Background Elements -->
+    <div class="absolute inset-0 z-0 overflow-hidden fixed bg-black">
+        <div class="fog-container">
+            <div class="fog-img"></div>
+            <div class="fog-img-2"></div>
+        </div>
+        <div class="tv-static absolute inset-0 opacity-10 mix-blend-overlay"></div>
+        
+        <!-- Creepy Background Image -->
+        <div id="bg-layer"
+             class="bg-layer absolute inset-0 bg-cover bg-center opacity-80 grayscale contrast-125 transition-all duration-100"
+             style="background-image: url('https://img.freepik.com/free-photo/corridor-abandoned-asylum-with-grunge-walls_1232-2826.jpg?t=st=1729654209~exp=1729657809~hmac=a476839a896f634354c034988f58097b399201f81d11342674e2a2253018d9e7&w=1380');">
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="relative z-20 flex flex-col items-center min-h-[150vh] px-4 pb-28 md:pb-20 pt-8">
+        
+        <!-- Header (Scrolls away) -->
+        <header class="text-center mt-12 mb-12 select-none">
+            <h1 id="main-title" class="font-horror text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-red-700 tracking-widest title-flicker transition-opacity duration-100 opacity-90 px-4" style="text-shadow: 0 0 20px rgba(185, 28, 28, 0.5)">
+                EERIE
+            </h1>
+            <p class="font-typewriter text-stone-400 mt-4 tracking-[0.3em] uppercase text-sm font-bold shadow-black drop-shadow-md">
+                Erikan Community School // 1998
+            </p>
+        </header>
+
+        <!-- Navigation (Sticks to top) -->
+        <nav id="sticky-nav" class="sticky top-0 z-40 w-full max-w-7xl mx-auto mb-16">
+            <!-- Nav Container Background -->
+            <div class="nav-bg absolute inset-0 bg-stone-900/90 backdrop-blur-md rounded-lg border-b-2 border-red-900/50 shadow-[0_0_50px_rgba(0,0,0,0.8)] z-0"></div>
+            
+            <!-- Blood Splatter Decoration -->
+            <div class="absolute -top-4 -right-4 w-24 h-24 bg-red-900 rounded-full opacity-60 blur-xl z-0 pointer-events-none"></div>
+            
+            <!-- Flex Container for Content -->
+            <div class="nav-inner relative z-10 flex flex-wrap md:flex-nowrap justify-between items-center p-2 md:p-4 gap-4 border-b border-red-900/30">
+                
+                <!-- LEFT: Logo -->
+                <a href="index.html" class="nav-logo order-1 md:order-1 flex-shrink-0 md:w-32 font-horror text-red-600 text-2xl md:text-3xl tracking-widest no-underline">
+                     <span class="title-flicker block">EERIE</span>
+                </a>
+
+                <!-- CENTER: Nav Items (Desktop Only) -->
+                <div class="hidden md:flex order-3 md:order-2 w-full lg:w-auto justify-between lg:justify-center items-center gap-1 md:gap-4 mt-2 md:mt-0">
+                    
+                    <!-- Home Button -->
+                    <a href="index.html" id="btn-home" class="btn-wrapper group relative flex flex-col items-center justify-center p-2 md:p-3 transition-all duration-300 outline-none text-red-600 active no-underline">
+                        <div class="mb-1 transition-transform duration-500 relative icon-container flex items-center justify-center">
+                            <i data-lucide="home" class="icon-main relative z-10 w-5 h-5 md:w-6 md:h-6 transition-all duration-500"></i>
+                            <i data-lucide="home" class="icon-ghost absolute top-0 left-0 text-red-600 opacity-0 transition-all duration-300 blur-sm w-6 h-6 group-hover:opacity-40 group-hover:translate-x-1 group-hover:translate-y-1"></i>
+                        </div>
+                        <span class="nav-text hidden md:block font-typewriter text-[10px] lg:text-xs tracking-wider uppercase font-bold blood-drip px-1 z-10 whitespace-nowrap" data-text="Home">Home</span>
+                        <div class="scratch-mark absolute bottom-0 w-full h-1 bg-gradient-to-r from-transparent via-red-900 to-transparent transition-all duration-500 transform opacity-100 scale-x-100"></div>
+                    </a>
+
+                    <!-- M&R Button -->
+                    <a href="M&R.html" id="btn-asylum" class="btn-wrapper group relative flex flex-col items-center justify-center p-2 md:p-3 transition-all duration-300 outline-none text-gray-500 hover:text-red-500 no-underline">
+                        <div class="mb-1 transition-transform duration-500 relative icon-container flex items-center justify-center">
+                            <i data-lucide="skull" class="icon-main relative z-10 w-5 h-5 md:w-6 md:h-6 transition-all duration-500"></i>
+                            <i data-lucide="skull" class="icon-ghost absolute top-0 left-0 text-red-600 opacity-0 transition-all duration-300 blur-sm w-6 h-6 group-hover:opacity-40 group-hover:translate-x-1 group-hover:translate-y-1"></i>
+                        </div>
+                        <span class="nav-text hidden md:block font-typewriter text-[10px] lg:text-xs tracking-wider uppercase font-bold blood-drip px-1 z-10 whitespace-nowrap" data-text="M&R">M&R</span>
+                        <div class="scratch-mark absolute bottom-0 w-full h-1 bg-gradient-to-r from-transparent via-red-900 to-transparent transition-all duration-500 transform opacity-0 scale-x-0"></div>
+                    </a>
+
+                    <!-- Teaser Button -->
+                    <a href="teaser.html" id="btn-visions" class="btn-wrapper group relative flex flex-col items-center justify-center p-2 md:p-3 transition-all duration-300 outline-none text-gray-500 hover:text-red-500 no-underline">
+                        <div class="mb-1 transition-transform duration-500 relative icon-container flex items-center justify-center">
+                            <i data-lucide="eye" class="icon-main relative z-10 w-5 h-5 md:w-6 md:h-6 transition-all duration-500"></i>
+                            <i data-lucide="eye" class="icon-ghost absolute top-0 left-0 text-red-600 opacity-0 transition-all duration-300 blur-sm w-6 h-6 group-hover:opacity-40 group-hover:translate-x-1 group-hover:translate-y-1"></i>
+                        </div>
+                        <span class="nav-text hidden md:block font-typewriter text-[10px] lg:text-xs tracking-wider uppercase font-bold blood-drip px-1 z-10 whitespace-nowrap" data-text="teaser">teaser</span>
+                        <div class="scratch-mark absolute bottom-0 w-full h-1 bg-gradient-to-r from-transparent via-red-900 to-transparent transition-all duration-500 transform opacity-0 scale-x-0"></div>
+                    </a>
+
+                    <!-- Story board Button -->
+                    <a href="story.html" id="btn-rituals" class="btn-wrapper group relative flex flex-col items-center justify-center p-2 md:p-3 transition-all duration-300 outline-none text-gray-500 hover:text-red-500 no-underline">
+                        <div class="mb-1 transition-transform duration-500 relative icon-container flex items-center justify-center">
+                            <i data-lucide="book-open" class="icon-main relative z-10 w-5 h-5 md:w-6 md:h-6 transition-all duration-500"></i>
+                            <i data-lucide="book-open" class="icon-ghost absolute top-0 left-0 text-red-600 opacity-0 transition-all duration-300 blur-sm w-6 h-6 group-hover:opacity-40 group-hover:translate-x-1 group-hover:translate-y-1"></i>
+                        </div>
+                        <span class="nav-text hidden md:block font-typewriter text-[10px] lg:text-xs tracking-wider uppercase font-bold blood-drip px-1 z-10 whitespace-nowrap" data-text="story board">story board</span>
+                        <div class="scratch-mark absolute bottom-0 w-full h-1 bg-gradient-to-r from-transparent via-red-900 to-transparent transition-all duration-500 transform opacity-0 scale-x-0"></div>
+                    </a>
+
+                    <!-- Behind the scene Button -->
+                    <a href="behindscene.html" id="btn-escape" class="btn-wrapper group relative flex flex-col items-center justify-center p-2 md:p-3 transition-all duration-300 outline-none text-gray-500 hover:text-red-500 no-underline">
+                        <div class="mb-1 transition-transform duration-500 relative icon-container flex items-center justify-center">
+                            <i data-lucide="map" class="icon-main relative z-10 w-5 h-5 md:w-6 md:h-6 transition-all duration-500"></i>
+                            <i data-lucide="map" class="icon-ghost absolute top-0 left-0 text-red-600 opacity-0 transition-all duration-300 blur-sm w-6 h-6 group-hover:opacity-40 group-hover:translate-x-1 group-hover:translate-y-1"></i>
+                        </div>
+                        <span class="nav-text hidden md:block font-typewriter text-[10px] lg:text-xs tracking-wider uppercase font-bold blood-drip px-1 z-10 whitespace-nowrap" data-text="behind the scene">behind the scene</span>
+                        <div class="scratch-mark absolute bottom-0 w-full h-1 bg-gradient-to-r from-transparent via-red-900 to-transparent transition-all duration-500 transform opacity-0 scale-x-0"></div>
+                    </a>
+                </div>
+
+                <!-- RIGHT: Watch Trailer -->
+                <div class="order-2 md:order-3 flex-shrink-0 md:w-32 text-right">
+                    <a href="trailer.html" class="nav-trailer font-typewriter text-red-500 border border-red-800 hover:bg-red-900/30 hover:text-white px-3 py-2 rounded transition-all duration-300 text-sm uppercase font-bold tracking-wider flex items-center gap-2 group" role="button" aria-label="Watch Trailer">
+                        <i data-lucide="play" class="w-4 h-4 fill-red-600 group-hover:fill-white transition-colors"></i>
+                        <span class="hidden sm:inline">Trailer</span>
+                    </a>
+                </div>
+
+            </div>
+            
+            <!-- Decorations -->
+            <div class="hidden md:block absolute -bottom-4 left-10 w-1 h-8 bg-stone-800 shadow-lg"></div>
+            <div class="hidden md:block absolute -bottom-4 right-20 w-1 h-8 bg-stone-800 shadow-lg"></div>
+        </nav>
+
+        <!-- Content Preview (Main Content) -->
+        <main class="w-full max-w-4xl text-center relative flex-grow flex flex-col items-center justify-start gap-12 pb-32">
+            
+            <!-- Dynamic Content Box -->
+            <div id="content-box" class="font-typewriter text-stone-300 p-8 border border-stone-700 bg-black/80 rounded shadow-2xl backdrop-blur-md w-full transition-all duration-300 min-h-[150px] flex items-center justify-center relative overflow-hidden group">
+                <div class="absolute inset-0 bg-red-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                <p id="content-text" class="animate-pulse text-xl md:text-2xl tracking-wide font-bold relative z-10">"Student 332 is missing from class 4B. The blackboard is bleeding again."</p>
+            </div>
+
+            <!-- NEW: Vault / Image Gallery Section -->
+            <div class="w-full text-left space-y-8 mt-4 z-10 relative">
+                <div class="flex flex-col items-center gap-2">
+                    <div class="flex items-center gap-4 w-full">
+                        <div class="h-px flex-grow bg-gradient-to-r from-transparent to-red-900"></div>
+                        <h3 class="text-red-800 font-horror text-2xl md:text-3xl tracking-widest uppercase title-flicker whitespace-nowrap">Vault Records</h3>
+                        <div class="h-px flex-grow bg-gradient-to-l from-transparent to-red-900"></div>
+                    </div>
+                    <div class="font-typewriter text-stone-500 text-sm italic opacity-70 flex flex-col items-center gap-2 mt-4 text-center max-w-2xl mx-auto bg-stone-900/50 p-4 border border-stone-800 rounded">
+                        <p class="flex items-center gap-2 text-red-800/80 font-bold uppercase tracking-widest"><i data-lucide="info" class="w-4 h-4"></i> Temporary Assets</p>
+                        <p class="text-xs leading-relaxed">The images currently displayed below are temporary placeholders used to establish the database framework. Actual archival photographs, crime scene documentation, and classified evidence from the 1998 incident will be securely uploaded here once full clearance is granted.</p>
+                    </div>
+                </div>
+
+                <!-- Image Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 p-4">
+                    
+                    <!-- Image 1: The Uploaded Picture -->
+                    <div class="relative group transform md:-rotate-2 hover:rotate-0 transition-all duration-500 cursor-crosshair">
+                        <div class="absolute inset-0 bg-red-900/20 blur-md group-hover:bg-red-600/40 transition-colors"></div>
+                        <div class="border-4 border-stone-900 bg-stone-900 p-2 relative shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                            <!-- Using the uploaded filename -->
+                            <img src="VAULT 001.jpg" onerror="this.src='https://images.unsplash.com/photo-1505527632669-7c2db1e2049e?auto=format&fit=crop&w=600&q=80'" alt="Vault 001" class="w-full h-auto object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700 aspect-square md:aspect-auto">
+                            <div class="absolute bottom-4 right-4 bg-black/90 px-3 py-1 border border-red-900/50 font-typewriter text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity shadow-[0_0_10px_rgba(220,38,38,0.5)]">FILE_001.DAT</div>
+                        </div>
+                        <p class="font-typewriter text-stone-500 text-xs mt-4 uppercase tracking-widest flex items-center gap-2"><i data-lucide="folder-lock" class="w-3 h-3 text-red-800"></i> Subject: The Faceless</p>
+                    </div>
+
+                    <!-- Image 2: Creepy Hallway -->
+                    <div class="relative group transform md:rotate-3 hover:rotate-0 transition-all duration-500 cursor-crosshair md:mt-12">
+                        <div class="absolute inset-0 bg-red-900/20 blur-md group-hover:bg-red-600/40 transition-colors"></div>
+                        <div class="border-4 border-stone-900 bg-stone-900 p-2 relative shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                            <img src="https://images.unsplash.com/photo-1518331539949-0d12e690fca7?auto=format&fit=crop&w=600&q=80" alt="Abandoned Hallway" class="w-full h-auto object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700 aspect-square md:aspect-auto">
+                            <div class="absolute top-4 left-4 bg-black/90 px-3 py-1 border border-red-900/50 font-typewriter text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity animate-pulse shadow-[0_0_10px_rgba(220,38,38,0.5)] flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-red-600"></div> REC // CAM 04</div>
+                        </div>
+                        <p class="font-typewriter text-stone-500 text-xs mt-4 uppercase tracking-widest text-right flex items-center justify-end gap-2">Location: West Wing <i data-lucide="map-pin" class="w-3 h-3 text-red-800"></i></p>
+                    </div>
+
+                    <!-- Image 3: Strange Artifact / Creepy elements -->
+                    <div class="relative group transform md:-rotate-1 hover:rotate-0 transition-all duration-500 cursor-crosshair">
+                        <div class="absolute inset-0 bg-red-900/20 blur-md group-hover:bg-red-600/40 transition-colors"></div>
+                        <div class="border-4 border-stone-900 bg-stone-900 p-2 relative shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                            <img src="https://images.unsplash.com/photo-1508688820309-8d76b107e3bd?auto=format&fit=crop&w=600&q=80" alt="Dark Forest/Texture" class="w-full h-auto object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700 aspect-square md:aspect-auto">
+                            <div class="absolute bottom-4 left-4 bg-black/90 px-3 py-1 border border-red-900/50 font-typewriter text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity shadow-[0_0_10px_rgba(220,38,38,0.5)] uppercase">Redacted</div>
+                        </div>
+                        <p class="font-typewriter text-stone-500 text-xs mt-4 uppercase tracking-widest flex items-center gap-2"><i data-lucide="eye-off" class="w-3 h-3 text-red-800"></i> Evidence: Unknown</p>
+                    </div>
+
+                    <!-- Image 4: Medical Log snippet -->
+                    <div class="relative group transform md:rotate-2 hover:rotate-0 transition-all duration-500 cursor-crosshair md:mt-8">
+                        <div class="absolute inset-0 bg-red-900/20 blur-md group-hover:bg-red-600/40 transition-colors"></div>
+                        <div class="border-4 border-stone-900 bg-stone-900 p-2 relative shadow-[0_0_20px_rgba(0,0,0,0.8)] flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1616423640778-28d1b53229bd?auto=format&fit=crop&w=600&q=80')] bg-cover bg-center grayscale contrast-150 aspect-square md:aspect-auto md:min-h-[300px]">
+                            <div class="bg-black/90 p-6 border border-red-900/50 m-4 backdrop-blur-sm relative overflow-hidden group-hover:bg-black/80 transition-colors">
+                                <div class="tv-static absolute inset-0 opacity-20"></div>
+                                <h4 class="text-red-700 font-horror text-xl mb-3 relative z-10">Patient 332</h4>
+                                <p class="font-typewriter text-stone-400 text-sm leading-relaxed glitch-text relative z-10" data-text="Symptoms: Extreme photophobia.">
+                                    Symptoms: Extreme photophobia. <br><br>
+                                    Speaking in reversed audio. <br><br>
+                                    Status: <span class="text-red-600">ESCAPED</span>.
+                                </p>
+                            </div>
+                        </div>
+                        <p class="font-typewriter text-stone-500 text-xs mt-4 uppercase tracking-widest text-right flex items-center justify-end gap-2">Document: Damaged <i data-lucide="file-warning" class="w-3 h-3 text-red-800"></i></p>
+                    </div>
+                </div>
+
+                <div class="h-px w-full bg-gradient-to-r from-transparent via-red-900 to-transparent mt-12 mb-8"></div>
+            </div>
+        </main>
+
+        <footer class="w-full text-center text-stone-500 text-xs font-typewriter mt-auto font-bold relative z-20">
+            <p>RECORDING... // ERROR 0x666 // DISCONNECTED</p>
+        </footer>
+    </div>
+
+    <!-- Mobile Bottom Navigation (Floating Pill Design) -->
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-[400px] z-50 md:hidden pb-safe">
+        <div class="bg-[#0f0f0f]/95 backdrop-blur-xl border border-stone-800 rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.9)] relative flex justify-between items-center px-4 h-[72px]">
+            
+            <!-- Items Left -->
+            <div class="flex w-[42%] justify-around">
+                <!-- Teaser -->
+                <a href="teaser.html" class="flex flex-col items-center justify-center gap-1.5 text-stone-500 hover:text-stone-300 transition-colors w-12">
+                    <i data-lucide="eye" class="w-[20px] h-[20px]"></i>
+                    <span class="font-typewriter text-[9px] tracking-widest uppercase">Teaser</span>
+                </a>
+                
+                <!-- M&R -->
+                <a href="M&R.html" class="flex flex-col items-center justify-center gap-1.5 text-stone-500 hover:text-stone-300 transition-colors w-12">
+                    <i data-lucide="skull" class="w-[20px] h-[20px]"></i>
+                    <span class="font-typewriter text-[9px] tracking-widest uppercase">M&R</span>
+                </a>
+            </div>
+
+            <!-- Center Floating Button (Home - Active) -->
+            <div class="absolute left-1/2 -translate-x-1/2 -top-6">
+                <a href="index.html" class="flex items-center justify-center w-[76px] h-[76px] rounded-full relative group z-10">
+                    <!-- Cutout background (black to match body and break the pill) -->
+                    <div class="absolute inset-0 bg-black rounded-full"></div>
+                    <!-- Red glowing ring -->
+                    <div class="absolute inset-[5px] rounded-full border-[1.5px] border-red-600 shadow-[0_0_20px_rgba(220,38,38,0.5),inset_0_0_15px_rgba(220,38,38,0.2)] flex items-center justify-center bg-[#050505] transition-transform duration-300 group-hover:scale-105">
+                        <i data-lucide="home" class="w-6 h-6 text-red-500 transition-colors drop-shadow-[0_0_12px_rgba(220,38,38,0.8)]"></i>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Items Right -->
+            <div class="flex w-[42%] justify-around">
+                <!-- Story Board -->
+                <a href="story.html" class="flex flex-col items-center justify-center gap-1.5 text-stone-500 hover:text-stone-300 transition-colors w-12">
+                    <i data-lucide="book-open" class="w-[20px] h-[20px]"></i>
+                    <span class="font-typewriter text-[9px] tracking-widest uppercase">Story</span>
+                </a>
+                
+                <!-- Behind the Scene -->
+                <a href="behindscene.html" class="flex flex-col items-center justify-center gap-1.5 text-stone-500 hover:text-stone-300 transition-colors w-12">
+                    <i data-lucide="map" class="w-[20px] h-[20px]"></i>
+                    <span class="font-typewriter text-[9px] tracking-widest uppercase">Behind</span>
+                </a>
+            </div>
+            
+        </div>
+    </nav>
+
+    <!-- Logic Script -->
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Sticky Nav Shrink Logic
+        const nav = document.getElementById('sticky-nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                nav.classList.add('scrolled-nav');
+            } else {
+                nav.classList.remove('scrolled-nav');
+            }
+        });
+
+        // Current Active Page Variable
+        let activeId = 'home';
+
+        // Flashlight Effect
+        const flashlight = document.getElementById('flashlight');
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            flashlight.style.background = `radial-gradient(circle 1000px at ${x}px ${y}px, transparent 20%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.4) 85%)`;
+        });
+
+        // Random Flicker Effect
+        setInterval(() => {
+            if (Math.random() > 0.85) { 
+                document.body.classList.add('flicker-mode');
+                
+                if (activeId === 'escape') {
+                    const activeBtn = document.getElementById('btn-escape');
+                    const span = activeBtn ? activeBtn.querySelector('span') : null;
+                    if(span) span.classList.add('glitch-text');
+                }
+
+                setTimeout(() => {
+                    document.body.classList.remove('flicker-mode');
+                    
+                    if (activeId === 'escape') {
+                        const activeBtn = document.getElementById('btn-escape');
+                        const span = activeBtn ? activeBtn.querySelector('span') : null;
+                        if(span) span.classList.remove('glitch-text');
+                    }
+                }, 50 + Math.random() * 150);
+            }
+        }, 3000);
+
+    </script>
+</body>
+</html>

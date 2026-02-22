@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Loading Screen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #111; /* Main website background */
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace; /* Creepy typewriter font */
+        }
+
+        /* Loading Screen Wrapper */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050000; /* Pitch black/dark red */
+            z-index: 9999;
+            overflow: hidden;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        /* Class applied when loading is complete */
+        #loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Canvas for background particles */
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Centered content container */
+        .loader-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        /* The Spinner */
+        .spinner {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        /* Outer dark ring */
+        .spinner-outer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: #4a0000; /* Dark blood red */
+            border-bottom-color: #4a0000;
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.4);
+            animation: spin 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+
+        /* Inner bright red ring */
+        .spinner-inner {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-left-color: #ff0000; /* Bright blood */
+            border-right-color: #ff0000;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+            animation: spin-reverse 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+
+        /* Beating heart core */
+        .spinner-core {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff0000 0%, #4a0000 100%);
+            box-shadow: 0 0 20px #ff0000, 0 0 40px #8b0000;
+            animation: heartbeat 1.2s ease-in-out infinite;
+        }
+
+        /* Loading Text */
+        .loading-text-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .loading-text {
+            color: #ffcccc;
+            font-size: 1.25rem;
+            font-weight: bold;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            animation: text-flicker 3s infinite;
+        }
+
+        .dots span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #ff0000;
+            animation: dot-bounce 1.4s infinite ease-in-out both;
+            margin: 0 2px;
+        }
+
+        .dots span:nth-child(1) { animation-delay: -0.32s; background-color: #4a0000;}
+        .dots span:nth-child(2) { animation-delay: -0.16s; background-color: #8b0000;}
+        .dots span:nth-child(3) { background-color: #ff0000;}
+
+        /* Keyframes */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spin-reverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            15% { transform: scale(1.1); opacity: 1; }
+            30% { transform: scale(0.8); opacity: 0.8; }
+            45% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0.8; }
+        }
+
+        @keyframes text-flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 10px #ff0000; }
+            20%, 22%, 24%, 55% { opacity: 0.1; text-shadow: none; }
+        }
+
+        @keyframes dot-bounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; box-shadow: 0 0 10px currentColor; }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 2rem;
+            width: 250px;
+            height: 4px;
+            background-color: rgba(255, 0, 0, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4a0000, #8b0000, #ff0000);
+            border-radius: 4px;
+            box-shadow: 0 0 10px #ff0000;
+            /* Fills up once to 100% and stays full */
+            animation: fill-progress 2.5s ease-out forwards; 
+        }
+
+        @keyframes fill-progress {
+            0% { width: 0%; }
+            20% { width: 30%; }
+            40% { width: 45%; }
+            60% { width: 80%; }
+            100% { width: 100%; }
+        }
+        
+        /* Main content styles */
+        #main-content {
+            display: none; /* Hidden until loaded */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADING SCREEN WRAPPER -->
+    <div id="loading-screen">
+        <!-- Background Canvas -->
+        <canvas id="particle-canvas"></canvas>
+
+        <!-- Foreground Loading Elements -->
+        <div class="loader-container">
+            <!-- Animated Nested Spinner -->
+            <div class="spinner">
+                <div class="spinner-outer"></div>
+                <div class="spinner-inner"></div>
+                <div class="spinner-core"></div>
+            </div>
+
+            <!-- Typography & Bouncing Dots -->
+            <div class="loading-text-container">
+                <div class="loading-text">Loading</div>
+                <div class="dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <!-- Simulated Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN WEBSITE CONTENT -->
+    <div id="main-content" class="min-h-screen flex flex-col items-center justify-center p-8 text-center opacity-0 transition-opacity duration-1000">
+        <h1 class="text-5xl font-bold text-red-600 mb-6 drop-shadow-[0_0_10px_rgba(255,0,0,0.8)]">Welcome to the Nightmare</h1>
+        <p class="text-xl text-gray-300 max-w-2xl">
+            The shadows have parted and the main content has successfully loaded. This is where the rest of your website lives securely beneath the loading screen.
+        </p>
+    </div>
+
+    <script>
+        // Particle Background System
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let w, h;
+        let animationId; // To store and cancel the animation frame
+
+        // Colors matching the CSS theme
+        const colors = ['#ff0000', '#8b0000', '#4a0000', '#1a0000'];
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * w;
+                this.y = Math.random() * h;
+                this.size = Math.random() * 2.5 + 0.5;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.density = (Math.random() * 30) + 1;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.speedX = (Math.random() - 0.5) * 0.5; // Slight drift
+                this.speedY = Math.random() * 2 + 0.5; // Falling like ash or blood
+                this.opacity = Math.random() * 0.5 + 0.1;
+                this.pulseSpeed = Math.random() * 0.02 + 0.005;
+            }
+
+            update() {
+                // Gentle drift
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Wrap around edges
+                if (this.x > w) this.x = 0;
+                if (this.x < 0) this.x = w;
+                if (this.y > h) this.y = 0;
+                if (this.y < 0) this.y = h;
+
+                // Pulsing opacity
+                this.opacity += Math.sin(Date.now() * this.pulseSpeed) * 0.01;
+                if (this.opacity < 0.1) this.opacity = 0.1;
+                if (this.opacity > 0.8) this.opacity = 0.8;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.opacity;
+                ctx.fill();
+                
+                // Add slight glow
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+            }
+        }
+
+        function init() {
+            resize();
+            particles = [];
+            // Create particles based on screen size
+            const numberOfParticles = (w * h) / 10000; 
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            
+            // Draw gradient background overlay
+            let gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w,h));
+            gradient.addColorStop(0, '#1a0000'); // Dark red center
+            gradient.addColorStop(1, '#050000'); // Pitch black edges
+            ctx.fillStyle = gradient;
+            ctx.globalAlpha = 1;
+            ctx.fillRect(0, 0, w, h);
+
+            // Update and draw particles
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+
+            // Interactive mouse connection lines (optional touch of interactivity)
+            connectParticles();
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Mouse interaction data
+        let mouse = {
+            x: null,
+            y: null,
+            radius: 150
+        }
+
+        window.addEventListener('mousemove', function(event) {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+
+        window.addEventListener('mouseout', function() {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        function connectParticles() {
+            let opacityValue = 1;
+            for (let a = 0; a < particles.length; a++) {
+                // Connect to mouse
+                if (mouse.x != null) {
+                    let dxMouse = particles[a].x - mouse.x;
+                    let dyMouse = particles[a].y - mouse.y;
+                    let distanceMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+                    
+                    if (distanceMouse < mouse.radius) {
+                        ctx.strokeStyle = `rgba(255, 0, 0, ${0.15 - distanceMouse/mouse.radius * 0.15})`; // Bloody veins
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                        ctx.shadowBlur = 0; // Turn off shadow for lines
+                    }
+                }
+            }
+        }
+
+        window.addEventListener('resize', init);
+
+        // --- LOADING LOGIC ---
+        // 1. Start canvas animation immediately
+        init();
+        animate();
+
+        // 2. Listen for the actual browser page load event like standard websites do
+        window.addEventListener('load', function() {
+            
+            // We wait just enough time (2.5s) for our simulated progress bar to reach 100%
+            // In a real heavy web app, you would remove this setTimeout and just run the code inside it.
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loading-screen');
+                const mainContent = document.getElementById('main-content');
+                
+                // Show the main content in the DOM (but keep it invisible)
+                mainContent.style.display = 'flex';
+                
+                // Trigger the CSS transition to fade out the loading screen
+                loadingScreen.classList.add('hidden');
+                
+                // Fade in the main content
+                setTimeout(() => {
+                    mainContent.classList.remove('opacity-0');
+                    mainContent.classList.add('opacity-100');
+                }, 50); 
+                
+                // Once the fade-out transition finishes (1 second), stop the canvas animation to save resources
+                setTimeout(() => {
+                    cancelAnimationFrame(animationId);
+                }, 1000);
+
+            }, 2500); 
+        });
+
+    </script>
+</body>
+</html>
