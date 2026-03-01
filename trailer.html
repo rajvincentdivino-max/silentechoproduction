@@ -94,12 +94,80 @@
         .poster-container {
             position: relative;
             min-height: 100vh;
+            min-height: 100dvh; /* NEW: Better mobile viewport handling */
             display: flex;
             flex-direction: column;
             /* Placeholder background simulating a dark, eerie cinematic poster */
             background: 
                 linear-gradient(to right, rgba(8, 8, 10, 0.95) 10%, rgba(8, 8, 10, 0.6) 50%, rgba(8, 8, 10, 0.95) 90%),
-                url('https://images.unsplash.com/photo-1505635552518-3448ff116af3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+                url('Gemini_Generated_Image_m3bxxwm3bxxwm3bx.png') center/cover no-repeat;
+            overflow: hidden;
+        }
+
+        /* NEW: Hero Background Video */
+        .video-background-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0; /* Behind the overlay */
+            pointer-events: none; /* Let clicks pass through */
+        }
+        
+        .hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 56.25vw; /* 16:9 aspect ratio */
+            min-height: 100vh;
+            min-height: 100dvh; /* NEW: Better mobile viewport handling */
+            min-width: 177.77vh; /* 16:9 aspect ratio */
+            opacity: 0; /* Hidden until idle */
+            transition: opacity 2s ease-in-out; /* Smooth cinematic fade */
+            pointer-events: none;
+        }
+        
+        .hero-video.playing {
+            opacity: 1;
+        }
+
+        /* NEW: Trailer Mute Button */
+        .trailer-mute-btn {
+            position: absolute;
+            bottom: 100px; /* Moved up to avoid overlapping with 'Play Theme' button */
+            right: 40px;
+            z-index: 50;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        .trailer-mute-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .trailer-mute-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+        .trailer-mute-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
         }
 
         .overlay {
@@ -152,8 +220,28 @@
 
         .info-block {
             display: flex;
-            gap: 2rem;
+            gap: 2.5rem;
             margin-top: 1rem;
+            align-items: flex-start;
+        }
+
+        /* New Poster Box styles */
+        .poster-box {
+            width: 220px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+            aspect-ratio: 3 / 4; /* Keeps it slightly squarish but perfect for posters */
+            background: #111;
+        }
+
+        .poster-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .mini-poster {
@@ -327,6 +415,45 @@
             border-color: var(--primary);
         }
 
+        .rating-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+        .rating-selector .label {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-right: 5px;
+        }
+        .star-icon {
+            width: 28px;
+            height: 28px;
+            fill: #444; /* Empty star color */
+            cursor: pointer;
+            transition: fill 0.2s, transform 0.1s;
+        }
+        .star-icon:hover {
+            transform: scale(1.1);
+        }
+        .star-icon.active {
+            fill: #f5c518; /* Gold star color */
+        }
+        
+        .comment-rating {
+            display: flex;
+            gap: 2px;
+            margin-left: 5px;
+        }
+        .comment-rating svg {
+            width: 16px;
+            height: 16px;
+            fill: #f5c518;
+        }
+        .comment-rating svg.empty {
+            fill: #444;
+        }
+
         .post-btn {
             background: var(--primary);
             color: white;
@@ -344,6 +471,25 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Custom Scrollbar for Comments */
+        .comments-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .comments-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+        }
+        .comments-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+        .comments-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .comment-item {
@@ -403,7 +549,7 @@
             max-width: 1400px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 2fr 1fr 1.5fr;
             gap: 4rem;
             margin-bottom: 4rem;
         }
@@ -432,6 +578,37 @@
             display: block;
         }
         .footer-links a:hover { color: var(--primary); padding-left: 8px; }
+
+        .footer-login-form {
+            display: flex;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        .footer-email-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px 0 0 6px;
+            color: white;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .footer-email-input:focus {
+            border-color: var(--primary);
+        }
+        .footer-login-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 24px;
+            border-radius: 0 6px 6px 0;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .footer-login-btn:hover { background: #b80710; }
 
         .footer-bottom {
             border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -466,6 +643,52 @@
             border-color: rgba(229, 9, 20, 1);
         }
 
+        /* --- NEW: CINEMATIC MODE FADE OUT --- */
+        .content-grid, .navbar, .overlay, .audio-toggle {
+            transition: opacity 0.8s ease-in-out, transform 0.3s ease, background 0.3s ease !important;
+        }
+
+        /* When idle, fade out everything except the video and the mute button */
+        body.cinematic-mode .content-grid,
+        body.cinematic-mode .navbar,
+        body.cinematic-mode .overlay,
+        body.cinematic-mode .audio-toggle {
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+
+        /* --- NEW: EASTER EGG STYLES --- */
+        body.spooky-mode .poster-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 0, 0, 0.4);
+            z-index: 50;
+            pointer-events: none;
+            animation: spookyFlicker 0.15s infinite alternate;
+            mix-blend-mode: multiply;
+        }
+
+        body.spooky-mode #eerieTitle {
+            color: #e50914;
+            text-shadow: 0 0 20px #e50914, 0 0 40px #e50914;
+            animation: textGlitch 0.2s infinite;
+        }
+
+        @keyframes spookyFlicker {
+            0% { opacity: 0.1; }
+            100% { opacity: 0.9; }
+        }
+
+        @keyframes textGlitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); }
+        }
+
         /* --- User Provided Mobile Overrides --- */
         @media (max-width: 900px) {
             /* Mobile Navbar */
@@ -497,6 +720,7 @@
                 border-bottom: 1px solid rgba(255,255,255,0.05);
                 display: none;
                 align-items: flex-start;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.8);
             }
             .nav-links.show { display: flex; }
             .nav-item {
@@ -507,13 +731,26 @@
 
             .content-grid {
                 grid-template-columns: 1fr;
-                padding: 4rem 2rem;
-                gap: 3rem;
+                padding: 6rem 1.5rem 3rem; /* Adjusted for navbar overlap */
+                gap: 2rem;
             }
+
+            h1 {
+                font-size: clamp(2.8rem, 12vw, 4.5rem); /* Better scaling for small screens */
+            }
+
             .right-panel {
-                align-items: flex-start;
+                align-items: center;
+                gap: 2rem;
             }
             .credits-corner { text-align: center; max-width: 100%; }
+
+            .trailer-mute-btn {
+                bottom: 80px; /* Above the audio theme button */
+                right: 20px;
+                width: 40px;
+                height: 40px;
+            }
 
             /* Center audio button on mobile */
             .audio-toggle { 
@@ -522,25 +759,61 @@
                 transform: translateX(50%); 
                 width: max-content;
                 font-size: 0.8rem;
-                padding: 10px 20px;
+                padding: 10px 24px;
+                white-space: nowrap;
+            }
+
+            .info-block {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 1.5rem;
+            }
+            
+            .poster-box {
+                width: 150px; /* Scaled down for mobile */
+                margin: 0 auto;
+            }
+
+            .meta-row {
+                justify-content: center;
+                font-size: 0.85rem;
+                gap: 0.8rem;
+            }
+
+            .genres {
+                justify-content: center;
+            }
+
+            /* Stack action buttons to be full width on mobile for easy tapping */
+            .actions-row {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.8rem;
+            }
+
+            .actions-row button {
+                width: 100%;
+                padding: 14px;
             }
 
             /* Mobile Comments */
             .comments-section { padding: 2rem 1.5rem; }
             .comment-form { flex-direction: column; }
             .comment-input { height: 80px; }
-            .post-btn { padding: 15px; }
+            .post-btn { padding: 15px; width: 100%; }
+            .rating-selector { justify-content: center; flex-wrap: wrap; }
 
             /* Mobile Footer */
             .site-footer {
-                padding: 3rem 1.5rem;
+                padding: 3rem 1.5rem 6rem; /* Extra bottom padding for fixed buttons */
             }
             .footer-content {
                 grid-template-columns: 1fr;
                 text-align: center;
                 gap: 2.5rem;
             }
-            .footer-brand, .footer-links {
+            .footer-brand, .footer-links, .footer-login {
                 align-items: center;
                 display: flex;
                 flex-direction: column;
@@ -549,6 +822,13 @@
                 padding-left: 0; /* disable shift on mobile center align */
                 color: #e50914;
             }
+            .footer-login-form {
+                flex-direction: column;
+                gap: 10px;
+                max-width: 300px;
+            }
+            .footer-email-input { border-radius: 6px; width: 100%; }
+            .footer-login-btn { border-radius: 6px; padding: 15px; width: 100%; }
             .footer-socials {
                 justify-content: center;
             }
@@ -565,7 +845,7 @@
     <!-- Navigation Bar -->
     <nav class="navbar" id="navbar">
         <div class="nav-links" id="navLinks">
-            <a href="index.html" class="nav-item">
+            <a href="home.html" class="nav-item">
                 <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 Home
             </a>
@@ -594,11 +874,28 @@
 
     <!-- Audio Element -->
     <audio id="theme-audio" loop>
-        <source src="https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3" type="audio/mp3">
+        <source src="horrorambiance3.mp3" type="audio/mp3">
+    </audio>
+
+    <!-- NEW: Spooky Easter Egg Audio -->
+    <audio id="spooky-audio">
+        <source src="https://actions.google.com/sounds/v1/horror/whispers_in_the_dark.ogg" type="audio/ogg">
     </audio>
 
     <div class="poster-container">
+        
+        <!-- New Netflix-style Background Trailer (YouTube) -->
+        <div class="video-background-wrapper">
+            <div id="heroVideo" class="hero-video"></div>
+        </div>
+
         <div class="overlay"></div>
+
+        <!-- NEW: Trailer Audio Toggle -->
+        <button id="trailerMuteBtn" class="trailer-mute-btn" aria-label="Toggle Mute">
+            <svg id="icon-muted" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+            <svg id="icon-unmuted" viewBox="0 0 24 24" style="display: none;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+        </button>
 
         <div class="content-grid">
             <!-- Left Side: Main Info -->
@@ -608,9 +905,15 @@
                     TV Series
                 </div>
 
-                <h1>EERIE</h1>
+                <!-- ADDED ID AND POINTER CURSOR FOR EASTER EGG -->
+                <h1 id="eerieTitle" style="cursor: pointer; user-select: none;" title="Are you sure you want to wake them?">EERIE</h1>
 
                 <div class="info-block">
+                    <!-- New Poster Box -->
+                    <div class="poster-box">
+                        <img src="SOR ALIICE (4).png" alt="Eerie Series Poster">
+                    </div>
+
                     <!-- Details -->
                     <div class="details-area">
                         <div class="meta-row">
@@ -673,6 +976,15 @@
     <div class="comments-section">
         <h2 class="comments-title">Audience Reviews</h2>
         
+        <div class="rating-selector" id="ratingSelector">
+            <span class="label">Rate this series:</span>
+            <svg class="star-icon active" data-val="1" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="star-icon active" data-val="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="star-icon active" data-val="3" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="star-icon active" data-val="4" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="star-icon active" data-val="5" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+
         <div class="comment-form">
             <textarea id="commentInput" class="comment-input" placeholder="Leave a review or theory..."></textarea>
             <button id="postCommentBtn" class="post-btn">Post</button>
@@ -693,14 +1005,14 @@
                     Experience the chills and thrills of Silentecho Production's masterpiece. Dive deep into the mystery that haunts the halls.
                 </p>
                 <div class="footer-socials">
-                    <a href="#" class="social-icon">
-                        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                    <a href="https://www.facebook.com/" target="_blank" class="social-icon">
+                        <svg viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.593 0 0 .593 0 1.325v21.351C0 23.408.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.408 0 22.675 0z"/></svg>
                     </a>
-                    <a href="#" class="social-icon">
-                        <svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+                    <a href="https://www.youtube.com/" target="_blank" class="social-icon">
+                        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                     </a>
-                    <a href="#" class="social-icon">
-                        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    <a href="https://www.tiktok.com/" target="_blank" class="social-icon">
+                        <svg viewBox="0 0 24 24"><path d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.329 6.329 0 0 0-5.394 10.692 6.33 6.33 0 0 0 10.857-4.424V8.687a8.182 8.182 0 0 0 4.773 1.526V6.79a4.831 4.831 0 0 1-1.003-.104z"/></svg>
                     </a>
                 </div>
             </div>
@@ -714,6 +1026,22 @@
                     <li><a href="#">Behind the Scenes</a></li>
                     <li><a href="#">Reviews</a></li>
                 </ul>
+            </div>
+
+            <!-- Email Login -->
+            <div class="footer-login">
+                <h3 class="footer-heading">Member Log In</h3>
+                <p class="footer-text" id="loginDesc">Sign in to unlock exclusive behind-the-scenes content and early updates.</p>
+                
+                <form id="footerLoginForm" class="footer-login-form">
+                    <input type="email" id="loginEmailInput" placeholder="Email address" required class="footer-email-input">
+                    <button type="submit" class="footer-login-btn">Log In</button>
+                </form>
+
+                <div id="loggedInState" style="display: none; margin-top: 1.5rem;">
+                    <p class="footer-text" style="color: white; font-weight: bold; margin-bottom: 10px;">Logged in as: <span id="loggedInEmail" style="color: var(--primary);"></span></p>
+                    <button id="logoutBtn" class="icon-btn" style="padding: 8px 16px; font-size: 0.9rem;">Log Out</button>
+                </div>
             </div>
         </div>
 
@@ -755,6 +1083,13 @@
                 audio.play();
                 body.classList.add('playing');
                 audioBtn.innerText = "Pause Theme";
+                
+                // Mute the trailer if playing theme music so they don't clash
+                if (typeof ytPlayer !== 'undefined' && ytPlayer && typeof ytPlayer.mute === 'function') {
+                    ytPlayer.mute();
+                    document.getElementById('icon-muted').style.display = 'block';
+                    document.getElementById('icon-unmuted').style.display = 'none';
+                }
             } else {
                 audio.pause();
                 body.classList.remove('playing');
@@ -770,6 +1105,184 @@
                 span.innerText = isAdded ? 'In Watchlist' : 'Add to Watchlist';
             }
         }
+
+        // --- NEW: Netflix-style Idle Video Trailer Logic (YouTube API) ---
+        const trailerMuteBtn = document.getElementById('trailerMuteBtn');
+        const iconMuted = document.getElementById('icon-muted');
+        const iconUnmuted = document.getElementById('icon-unmuted');
+        let idleTimer;
+        let videoStarted = false;
+        let ytPlayerReady = false;
+        let ytPlayer;
+        let isIdle = false;
+        let hasPlayedOnce = false; // NEW: Track if the first 3-second trigger has happened
+
+        // Load the IFrame Player API code asynchronously
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // Initialize the YouTube Player
+        window.onYouTubeIframeAPIReady = function() {
+            ytPlayer = new YT.Player('heroVideo', {
+                videoId: 'vpPgBs2MTxI', // NEW Eerie Trailer YouTube ID
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'loop': 1,
+                    'playlist': 'vpPgBs2MTxI', // required to loop correctly
+                    'modestbranding': 1,
+                    'mute': 1, // Start muted to guarantee browser allows autoplay
+                    'playsinline': 1,
+                    'rel': 0,
+                    'showinfo': 0
+                },
+                events: {
+                    'onReady': function(event) {
+                        ytPlayerReady = true;
+                        resetIdleTimer(); // Start timer once player is fully loaded
+                    },
+                    'onStateChange': function(event) {
+                        const iframeElem = document.getElementById('heroVideo');
+                        // Only fade in when video is actually PLAYING (avoids showing red play button)
+                        if (event.data === YT.PlayerState.PLAYING) {
+                            iframeElem.classList.add('playing');
+                            trailerMuteBtn.classList.add('visible');
+                            
+                            // Instantly hide UI at the exact moment video starts, 
+                            // but only if the user is actively idle
+                            if (isIdle && window.scrollY <= 50) {
+                                document.body.classList.add('cinematic-mode');
+                            }
+                            
+                            // Match UI to actual mute state
+                            if (ytPlayer.isMuted()) {
+                                iconMuted.style.display = 'block';
+                                iconUnmuted.style.display = 'none';
+                            } else {
+                                iconMuted.style.display = 'none';
+                                iconUnmuted.style.display = 'block';
+                            }
+                        } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+                            iframeElem.classList.remove('playing');
+                            trailerMuteBtn.classList.remove('visible');
+                            document.body.classList.remove('cinematic-mode');
+                        }
+                    }
+                }
+            });
+        }
+
+        function resetIdleTimer(e) {
+            // Ignore if the activity came from the mute button so it doesn't pause when clicked
+            if (e && e.target && (e.target.id === 'trailerMuteBtn' || e.target.closest('#trailerMuteBtn'))) {
+                return;
+            }
+
+            // 1. Instantly wake up the UI on any movement
+            isIdle = false;
+            document.body.classList.remove('cinematic-mode');
+
+            // --- FIX: Only pause the video if the user SCROLLS down ---
+            // Previously this paused the video on ANY mouse movement, which hid the mute button instantly
+            if (window.scrollY > 50) {
+                if (ytPlayerReady && ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+                    if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                        ytPlayer.pauseVideo();
+                    }
+                }
+            }
+
+            clearTimeout(idleTimer);
+            
+            // Wait until the YouTube player is actually loaded
+            if (!ytPlayerReady) return; 
+
+            // 2. Only go into cinematic idle mode if the user is at the very top of the page
+            if (window.scrollY > 50) return;
+
+            // Determine cooldown: 3 seconds for the first time, 20 seconds after that
+            const cooldownDuration = hasPlayedOnce ? 20000 : 3000;
+
+            // 3. Wait specified inactivity before fading out UI and ensuring video plays
+            idleTimer = setTimeout(() => {
+                isIdle = true;
+                hasPlayedOnce = true; // Mark that it has triggered at least once
+
+                if (ytPlayer && typeof ytPlayer.getPlayerState === 'function') {
+                    if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                        // If already playing, hide the UI smoothly
+                        document.body.classList.add('cinematic-mode');
+                    } else if (typeof ytPlayer.playVideo === 'function') {
+                        // Request video play. 'onStateChange' will hide the UI *exactly* when it starts rendering
+                        videoStarted = true;
+                        ytPlayer.playVideo(); 
+                    }
+                }
+            }, cooldownDuration);
+        }
+
+        // Handle Mute Button Click
+        trailerMuteBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent document click from firing and pausing the video
+            if (ytPlayer.isMuted()) {
+                ytPlayer.unMute();
+                iconMuted.style.display = 'none';
+                iconUnmuted.style.display = 'block';
+                // Pause theme music if unmuting trailer
+                if (!audio.paused) {
+                    audio.pause();
+                    document.body.classList.remove('playing');
+                    document.getElementById('audioBtn').innerText = "Play Theme";
+                }
+            } else {
+                ytPlayer.mute();
+                iconMuted.style.display = 'block';
+                iconUnmuted.style.display = 'none';
+            }
+        });
+
+        // Listen for user activity to wake up the UI or delay the video start
+        window.addEventListener('mousemove', resetIdleTimer);
+        window.addEventListener('keydown', resetIdleTimer);
+        window.addEventListener('touchstart', resetIdleTimer);
+        window.addEventListener('click', resetIdleTimer);
+        window.addEventListener('scroll', resetIdleTimer); // Scroll now uses the same unified logic
+
+        // --- NEW: EASTER EGG LOGIC ---
+        const eerieTitle = document.getElementById('eerieTitle');
+        const spookyAudio = document.getElementById('spooky-audio');
+        let titleClicks = 0;
+        let titleClickTimer;
+
+        eerieTitle.addEventListener('click', () => {
+            titleClicks++;
+            
+            // Clear the reset timer on every click
+            clearTimeout(titleClickTimer);
+            
+            if (titleClicks === 3) {
+                // Trigger the Easter Egg!
+                document.body.classList.add('spooky-mode');
+                spookyAudio.volume = 0.8;
+                spookyAudio.currentTime = 0; // Restart sound if played multiple times
+                spookyAudio.play();
+                
+                // End the nightmare after 4.5 seconds
+                setTimeout(() => {
+                    document.body.classList.remove('spooky-mode');
+                    titleClicks = 0;
+                }, 4500);
+            } else {
+                // If they don't click 3 times within 1.5 seconds, reset the count
+                titleClickTimer = setTimeout(() => {
+                    titleClicks = 0;
+                }, 1500);
+            }
+        });
+
     </script>
 
     <!-- FIREBASE REALTIME DATABASE MODULE (REST API) -->
@@ -790,6 +1303,49 @@
                 localStorage.setItem('eerie_user_id', localUserId);
             }
 
+            // --- AUTH LOGIC ---
+            let userEmail = localStorage.getItem('eerie_user_email') || null;
+            const loginForm = document.getElementById('footerLoginForm');
+            const loginEmailInput = document.getElementById('loginEmailInput');
+            const loggedInState = document.getElementById('loggedInState');
+            const loggedInEmailSpan = document.getElementById('loggedInEmail');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const loginDesc = document.getElementById('loginDesc');
+
+            function updateAuthUI() {
+                if (userEmail) {
+                    loginForm.style.display = 'none';
+                    loginDesc.style.display = 'none';
+                    loggedInState.style.display = 'block';
+                    loggedInEmailSpan.textContent = userEmail;
+                } else {
+                    loginForm.style.display = 'flex';
+                    loginDesc.style.display = 'block';
+                    loggedInState.style.display = 'none';
+                    loginEmailInput.value = '';
+                }
+                updateCommentLimitUI(); // Refresh comment box state based on login status
+            }
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = loginEmailInput.value.trim();
+                if (email) {
+                    userEmail = email;
+                    localStorage.setItem('eerie_user_email', email);
+                    updateAuthUI();
+                    
+                    // Smooth scroll up to the comments section once logged in
+                    document.querySelector('.comments-section').scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                userEmail = null;
+                localStorage.removeItem('eerie_user_email');
+                updateAuthUI();
+            });
+
             // --- DOM ELEMENTS ---
             const likeBtn = document.getElementById("likeBtn");
             const likeCountElem = document.getElementById("likeCount");
@@ -798,6 +1354,31 @@
             const commentInput = document.getElementById("commentInput");
             const postBtn = document.getElementById("postCommentBtn");
             const commentsList = document.getElementById("commentsList");
+            const ratingStars = document.querySelectorAll('.star-icon');
+
+            let currentSelectedRating = 5;
+
+            // --- RATING STAR LOGIC ---
+            ratingStars.forEach(star => {
+                star.addEventListener('click', (e) => {
+                    // Prevent changing rating if logged out or limit is reached
+                    if (postBtn.disabled) return;
+                    
+                    currentSelectedRating = parseInt(e.currentTarget.getAttribute('data-val'));
+                    updateStarUI(currentSelectedRating);
+                });
+            });
+
+            function updateStarUI(rating) {
+                ratingStars.forEach(star => {
+                    const val = parseInt(star.getAttribute('data-val'));
+                    if (val <= rating) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                });
+            }
 
             // --- FIREBASE SYNC FUNCTIONS ---
             
@@ -901,17 +1482,30 @@
             // --- COMMENT SECTION LOGIC ---
             
             function updateCommentLimitUI() {
+                // 1. Check if user is logged in first
+                if (!userEmail) {
+                    postBtn.disabled = true;
+                    postBtn.innerText = "Log In to Post";
+                    commentInput.placeholder = "Please log in from the footer below to leave a review.";
+                    commentInput.disabled = true;
+                    ratingStars.forEach(s => s.style.opacity = '0.4'); // Dim stars
+                    return;
+                }
+
+                // 2. If logged in, check comment limits
                 const myCommentsCount = comments.filter(c => c.userId === localUserId).length;
                 if (myCommentsCount >= 3) {
                     postBtn.disabled = true;
                     postBtn.innerText = "Limit Reached";
                     commentInput.placeholder = "You've reached the 3-review limit per user.";
                     commentInput.disabled = true;
+                    ratingStars.forEach(s => s.style.opacity = '0.4'); // Dim stars
                 } else {
                     postBtn.disabled = false;
                     postBtn.innerText = "Post";
                     commentInput.placeholder = "Leave a review or theory...";
                     commentInput.disabled = false;
+                    ratingStars.forEach(s => s.style.opacity = '1'); // Restore stars
                 }
             }
 
@@ -931,6 +1525,18 @@
                     const date = new Date(comment.timestamp);
                     const timeString = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
+                    // Render Stars HTML
+                    let starsHtml = '<div class="comment-rating">';
+                    const rating = comment.rating || 5; // Fallback to 5 for old comments
+                    for (let i = 1; i <= 5; i++) {
+                        if (i <= rating) {
+                            starsHtml += `<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+                        } else {
+                            starsHtml += `<svg class="empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+                        }
+                    }
+                    starsHtml += '</div>';
+
                     const deleteBtnHtml = comment.userId === localUserId 
                         ? `<button class="delete-btn" data-key="${comment.firebaseKey}">Delete</button>` 
                         : '';
@@ -941,7 +1547,8 @@
                         <div class="comment-header">
                             <div class="comment-author-info">
                                 <span class="comment-author">${escapeHtml(comment.author)}</span>
-                                <span>${timeString}</span>
+                                ${starsHtml}
+                                <span style="margin-left:8px;">${timeString}</span>
                             </div>
                             ${deleteBtnHtml}
                         </div>
@@ -962,6 +1569,11 @@
             });
 
             postBtn.addEventListener('click', async () => {
+                if (!userEmail) {
+                    alert("Please log in from the footer first.");
+                    return;
+                }
+
                 const text = commentInput.value.trim();
                 if (text === "") return;
 
@@ -975,17 +1587,23 @@
                 postBtn.disabled = true;
                 postBtn.innerText = "Posting...";
 
+                // Create a username from the email (e.g. "john" from "john@email.com")
+                const authorName = userEmail.split('@')[0];
+
                 const newComment = {
                     id: Date.now(),
                     userId: localUserId,
-                    author: "Guest Reviewer",
+                    author: authorName,
                     text: text,
+                    rating: currentSelectedRating,
                     timestamp: Date.now()
                 };
 
                 await addCommentToDB(newComment);
 
                 commentInput.value = "";
+                currentSelectedRating = 5; // Reset UI to 5 stars
+                updateStarUI(5);
                 // updateCommentLimitUI will handle button state after fetch
             });
 
@@ -1001,6 +1619,7 @@
             }
 
             // Initialize
+            updateAuthUI();
             updateLikeUI();
             fetchLikes();
             fetchComments();

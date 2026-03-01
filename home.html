@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EERIE</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Special+Elite&display=swap');
+        
+        /* --- Custom Styles --- */
+        body {
+            background-color: #000;
+            overflow-x: hidden;
+            font-family: 'Special Elite', monospace;
+            cursor: crosshair;
+        }
+
+        .font-horror {
+            font-family: 'Nosifer', cursive;
+        }
+        
+        .font-typewriter {
+            font-family: 'Special Elite', monospace;
+        }
+
+        /* TV Static Background */
+        .tv-static {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            animation: static-noise 0.2s infinite;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        @keyframes static-noise {
+            0% { transform: translateX(0) translateY(0); }
+            10% { transform: translateX(-5%) translateY(5%); }
+            20% { transform: translateX(-10%) translateY(5%); }
+            30% { transform: translateX(5%) translateY(-5%); }
+            40% { transform: translateX(-5%) translateY(15%); }
+            50% { transform: translateX(-10%) translateY(5%); }
+            60% { transform: translateX(15%) translateY(0); }
+            70% { transform: translateX(0) translateY(10%); }
+            80% { transform: translateX(-15%) translateY(0); }
+            90% { transform: translateX(10%) translateY(5%); }
+            100% { transform: translateX(5%) translateY(0); }
+        }
+
+        /* Glitch Text Effect */
+        .glitch-text {
+            position: relative;
+        }
+        
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0c0a09;
+        }
+
+        .glitch-text::before {
+            left: 2px;
+            text-shadow: -1px 0 #ff0000;
+            clip-path: inset(40% 0 61% 0);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        .glitch-text::after {
+            left: -2px;
+            text-shadow: -1px 0 #00ff00;
+            clip-path: inset(10% 0 50% 0);
+            animation: glitch-anim 2.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip-path: inset(10% 0 80% 0); }
+            20% { clip-path: inset(60% 0 10% 0); }
+            40% { clip-path: inset(40% 0 50% 0); }
+            60% { clip-path: inset(80% 0 5% 0); }
+            80% { clip-path: inset(20% 0 60% 0); }
+            100% { clip-path: inset(70% 0 20% 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(80% 0 5% 0); }
+            20% { clip-path: inset(10% 0 70% 0); }
+            40% { clip-path: inset(50% 0 20% 0); }
+            60% { clip-path: inset(20% 0 60% 0); }
+            80% { clip-path: inset(70% 0 10% 0); }
+            100% { clip-path: inset(5% 0 80% 0); }
+        }
+
+        /* Blood Drip Hover */
+        .blood-drip {
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s;
+            display: inline-block;
+        }
+
+        .blood-drip::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #8a0000 70%, transparent 100%);
+            transition: top 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: -1;
+            border-radius: 0 0 15px 15px;
+            opacity: 0.8;
+        }
+
+        .btn-wrapper:hover .blood-drip {
+            color: #ffcccc;
+            text-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
+        }
+
+        .btn-wrapper:hover .blood-drip::after {
+            top: -10px;
+        }
+
+        /* Fog Animation */
+        .fog-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .fog-img {
+            position: absolute;
+            height: 100vh;
+            width: 300vw;
+            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png') repeat-x;
+            background-size: contain;
+            animation: fog 60s linear infinite;
+        }
+        
+        .fog-img-2 {
+            position: absolute;
+            height: 100vh;
+            width: 300vw;
+            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png') repeat-x;
+            background-size: contain;
+            animation: fog 40s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes fog {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-200vw, 0, 0); }
+        }
+
+        /* Button Active States managed by JS classes */
+        .btn-wrapper.active .icon-main {
+            filter: drop-shadow(0 0 10px rgba(220,38,38,0.7));
+            transform: scale(1.25) rotate(6deg);
+            color: #dc2626; 
+        }
+
+        .btn-wrapper.active .icon-ghost {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            opacity: 0.5;
+        }
+        
+        .btn-wrapper.active .scratch-mark {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+
+        .btn-wrapper.active .blood-drip {
+            color: #dc2626;
+        }
+
+        /* Global Flicker Class */
+        .flicker-mode .bg-layer {
+            filter: invert(1);
+        }
+        .flicker-mode h1 {
+            opacity: 0.3;
+        }
+
+        /* --- Easter Egg Styles --- */
+        .violent-glitch-mode {
+            animation: glitch-anim 0.05s infinite !important;
+            filter: invert(1) hue-rotate(180deg) contrast(200%) !important;
+            background-color: #500 !important;
+        }
+
+        .jumpscare-text {
+            animation: pulse-scare 0.1s infinite;
+        }
+
+        @keyframes pulse-scare {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Title Flickering Animation */
+        @keyframes flicker-text {
+            0%   { opacity: 1; text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+            5%   { opacity: 0.3; text-shadow: none; }
+            10%  { opacity: 1; text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+            15%  { opacity: 1; text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+            20%  { opacity: 0.3; text-shadow: none; }
+            25%  { opacity: 1; text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+            30%  { opacity: 0.1; text-shadow: none; }
+            35%  { opacity: 1; text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+            70%  { opacity: 0.7; text-shadow: 0 0 10px rgba(185, 28, 28, 0.5); }
+            72%  { opacity: 0.2; text-shadow: none; }
+            74%  { opacity: 0.9; text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+            100% { opacity: 0.9; text-shadow: 0 0 20px rgba(185, 28, 28, 0.8); }
+        }
+        
+        .title-flicker {
+            animation: flicker-text 5s infinite steps(1);
+        }
+        
+        /* Mobile adjustment for nav */
+        @media (max-width: 768px) {
+            .btn-wrapper span {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* --- STICKY NAV TRANSITIONS --- */
+        #sticky-nav .nav-inner,
+        #sticky-nav .btn-wrapper,
+        #sticky-nav .icon-main,
+        #sticky-nav .nav-text,
+        #sticky-nav .nav-bg,
+        #sticky-nav .nav-logo,
+        #sticky-nav .nav-trailer {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-logo {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+
+        .nav-trailer {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        @media (max-width: 768px) {
+            .nav-trailer {
+                padding: 0.5rem 0.75rem !important;
+                font-size: 0.65rem;
+                gap: 0.5rem;
+            }
+        }
+
+        #sticky-nav.scrolled-nav .nav-inner {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+
+        #sticky-nav.scrolled-nav .btn-wrapper {
+            padding: 0.25rem 0.5rem;
+        }
+
+        #sticky-nav.scrolled-nav .icon-main {
+            width: 1.25rem;
+            height: 1.25rem;
+            transform-origin: center;
+        }
+        
+        #sticky-nav.scrolled-nav .icon-ghost {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        #sticky-nav.scrolled-nav .nav-text {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-left: 0.5rem;
+        }
+        
+        #sticky-nav.scrolled-nav .nav-bg {
+            background-color: rgba(28, 25, 23, 0.95);
+            border-bottom-color: rgba(127, 29, 29, 0.8);
+        }
+
+        #sticky-nav.scrolled-nav .nav-logo {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            font-size: 1.25rem;
+        }
+
+        #sticky-nav.scrolled-nav .nav-trailer {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        /* Safe area padding for bottom nav */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+</head>
+<body class="selection:bg-red-900 selection:text-white min-h-screen relative">
+
+    <!-- Flashlight / Vignette Effect -->
+    <div id="flashlight" 
+         class="pointer-events-none fixed inset-0 z-50 transition-opacity duration-100"
+         style="background: radial-gradient(circle 1000px at 50% 50%, transparent 20%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.4) 85%);">
+    </div>
+
+    <!-- Background Elements -->
+    <div class="absolute inset-0 z-0 overflow-hidden fixed bg-black">
+        <div class="fog-container">
+            <div class="fog-img"></div>
+            <div class="fog-img-2"></div>
+        </div>
+        <div class="tv-static absolute inset-0 opacity-10 mix-blend-overlay"></div>
+        
+        <!-- Creepy Background Image -->
+        <div id="bg-layer"
+             class="bg-layer absolute inset-0 bg-cover bg-center opacity-80 grayscale contrast-125 transition-all duration-100"
+             style="background-image: url('Gemini_Generated_Image_qvb5i6qvb5i6qvb5.png');">
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="relative z-20 flex flex-col items-center min-h-[150vh] w-full pt-8">
+        
+        <!-- Header (Scrolls away) -->
+        <header class="text-center mt-12 mb-12 select-none px-4">
+            <h1 id="main-title" class="font-horror text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-red-700 tracking-widest title-flicker transition-opacity duration-100 opacity-90 px-4" style="text-shadow: 0 0 20px rgba(185, 28, 28, 0.5)">
+                EERIE
+            </h1>
+            <p class="font-typewriter text-stone-400 mt-4 tracking-[0.3em] uppercase text-sm font-bold shadow-black drop-shadow-md">
+                Erikan Community School // 1998
+            </p>
+        </header>
+
+        <!-- Navigation (Sticks to top) -->
+        <nav id="sticky-nav" class="sticky top-0 z-40 w-[calc(100%-2rem)] max-w-7xl mx-auto mb-16">
+            <!-- Nav Container Background -->
+            <div class="nav-bg absolute inset-0 bg-stone-900/90 backdrop-blur-md rounded-lg border-b-2 border-red-900/50 shadow-[0_0_50px_rgba(0,0,0,0.8)] z-0"></div>
+            
+            <!-- Blood Splatter Decoration -->
+            <div class="absolute -top-4 -right-4 w-24 h-24 bg-red-900 rounded-full opacity-60 blur-xl z-0 pointer-events-none"></div>
+            
+            <!-- Flex Container for Content -->
+            <div class="nav-inner relative z-10 flex flex-wrap md:flex-nowrap justify-between items-center p-2 md:p-4 gap-4 border-b border-red-900/30">
+                
+                <!-- LEFT: Logo -->
+                <a href="home.html" class="nav-logo order-1 md:order-1 flex-shrink-0 md:w-32 font-horror text-red-600 text-2xl md:text-3xl tracking-widest no-underline">
+                     <span class="title-flicker block">EERIE</span>
+                </a>
+
+                <!-- CENTER: Nav Items (Desktop Only) -->
+                <div class="hidden md:flex order-3 md:order-2 w-full lg:w-auto justify-between lg:justify-center items-center gap-1 md:gap-4 mt-2 md:mt-0">
+                    
+                    <!-- Home Button -->
+                    <a href="home.html" id="btn-home" class="btn-wrapper group relative flex flex-col items-center justify-center p-2 md:p-3 transition-all duration-300 outline-none text-red-600 active no-underline">
+                        <div class="mb-1 transition-transform duration-500 relative icon-container flex items-center justify-center">
+                            <i data-lucide="home" class="icon-main relative z-10 w-5 h-5 md:w-6 md:h-6 transition-all duration-500"></i>
+                            <i data-lucide="home" class="icon-ghost absolute top-0 left-0 text-red-600 opacity-0 transition-all duration-300 blur-sm w-6 h-6 group-hover:opacity-40 group-hover:translate-x-1 group-hover:translate-y-1"></i>
+                        </div>
+                        <span class="nav-text hidden md:block font-typewriter text-[10px] lg:text-xs tracking-wider uppercase font-bold blood-drip px-1 z-10 whitespace-nowrap" data-text="Home">Home</span>
+                        <div class="scratch-mark absolute bottom-0 w-full h-1 bg-gradient-to-r from-transparent via-red-900 to-transparent transition-all duration-500 transform opacity-100 scale-x-100"></div>
+                    </a>
+
+                    <!-- M&R Button -->
+                    <a href="M&R.html" id="btn-asylum" class="btn-wrapper group relative flex flex-col items-center justify-center p-2 md:p-3 transition-all duration-300 outline-none text-gray-500 hover:text-red-500 no-underline">
+                        <div class="mb-1 transition-transform duration-500 relative icon-container flex items-center justify-center">
+                            <i data-lucide="skull" class="icon-main relative z-10 w-5 h-5 md:w-6 md:h-6 transition-all duration-500"></i>
+                            <i data-lucide="skull" class="icon-ghost absolute top-0 left-0 text-red-600 opacity-0 transition-all duration-300 blur-sm w-6 h-6 group-hover:opacity-40 group-hover:translate-x-1 group-hover:translate-y-1"></i>
+                        </div>
+                        <span class="nav-text hidden md:block font-typewriter text-[10px] lg:text-xs tracking-wider uppercase font-bold blood-drip px-1 z-10 whitespace-nowrap" data-text="M&R">M&R</span>
+                        <div class="scratch-mark absolute bottom-0 w-full h-1 bg-gradient-to-r from-transparent via-red-900 to-transparent transition-all duration-500 transform opacity-0 scale-x-0"></div>
+                    </a>
+
+                    <!-- Teaser Button -->
+                    <a href="teaser.html" id="btn-visions" class="btn-wrapper group relative flex flex-col items-center justify-center p-2 md:p-3 transition-all duration-300 outline-none text-gray-500 hover:text-red-500 no-underline">
+                        <div class="mb-1 transition-transform duration-500 relative icon-container flex items-center justify-center">
+                            <i data-lucide="eye" class="icon-main relative z-10 w-5 h-5 md:w-6 md:h-6 transition-all duration-500"></i>
+                            <i data-lucide="eye" class="icon-ghost absolute top-0 left-0 text-red-600 opacity-0 transition-all duration-300 blur-sm w-6 h-6 group-hover:opacity-40 group-hover:translate-x-1 group-hover:translate-y-1"></i>
+                        </div>
+                        <span class="nav-text hidden md:block font-typewriter text-[10px] lg:text-xs tracking-wider uppercase font-bold blood-drip px-1 z-10 whitespace-nowrap" data-text="teaser">teaser</span>
+                        <div class="scratch-mark absolute bottom-0 w-full h-1 bg-gradient-to-r from-transparent via-red-900 to-transparent transition-all duration-500 transform opacity-0 scale-x-0"></div>
+                    </a>
+
+                    <!-- Story board Button -->
+                    <a href="story.html" id="btn-rituals" class="btn-wrapper group relative flex flex-col items-center justify-center p-2 md:p-3 transition-all duration-300 outline-none text-gray-500 hover:text-red-500 no-underline">
+                        <div class="mb-1 transition-transform duration-500 relative icon-container flex items-center justify-center">
+                            <i data-lucide="book-open" class="icon-main relative z-10 w-5 h-5 md:w-6 md:h-6 transition-all duration-500"></i>
+                            <i data-lucide="book-open" class="icon-ghost absolute top-0 left-0 text-red-600 opacity-0 transition-all duration-300 blur-sm w-6 h-6 group-hover:opacity-40 group-hover:translate-x-1 group-hover:translate-y-1"></i>
+                        </div>
+                        <span class="nav-text hidden md:block font-typewriter text-[10px] lg:text-xs tracking-wider uppercase font-bold blood-drip px-1 z-10 whitespace-nowrap" data-text="story board">story board</span>
+                        <div class="scratch-mark absolute bottom-0 w-full h-1 bg-gradient-to-r from-transparent via-red-900 to-transparent transition-all duration-500 transform opacity-0 scale-x-0"></div>
+                     </a>
+
+                    <!-- Behind the scene Button -->
+                    <a href="behindscene.html" id="btn-escape" class="btn-wrapper group relative flex flex-col items-center justify-center p-2 md:p-3 transition-all duration-300 outline-none text-gray-500 hover:text-red-500 no-underline">
+                        <div class="mb-1 transition-transform duration-500 relative icon-container flex items-center justify-center">
+                            <i data-lucide="map" class="icon-main relative z-10 w-5 h-5 md:w-6 md:h-6 transition-all duration-500"></i>
+                            <i data-lucide="map" class="icon-ghost absolute top-0 left-0 text-red-600 opacity-0 transition-all duration-300 blur-sm w-6 h-6 group-hover:opacity-40 group-hover:translate-x-1 group-hover:translate-y-1"></i>
+                        </div>
+                        <span class="nav-text hidden md:block font-typewriter text-[10px] lg:text-xs tracking-wider uppercase font-bold blood-drip px-1 z-10 whitespace-nowrap" data-text="behind the scene">behind the scene</span>
+                        <div class="scratch-mark absolute bottom-0 w-full h-1 bg-gradient-to-r from-transparent via-red-900 to-transparent transition-all duration-500 transform opacity-0 scale-x-0"></div>
+                    </a>
+                </div>
+
+                <!-- RIGHT: Watch Trailer -->
+                <div class="order-2 md:order-3 flex-shrink-0 md:w-32 text-right">
+                    <a href="trailer.html" class="nav-trailer font-typewriter text-red-500 border border-red-800 hover:bg-red-900/30 hover:text-white px-3 py-2 rounded transition-all duration-300 text-sm uppercase font-bold tracking-wider flex items-center gap-2 group" role="button" aria-label="Watch Trailer">
+                        <i data-lucide="play" class="w-4 h-4 fill-red-600 group-hover:fill-white transition-colors"></i>
+                        <span class="hidden sm:inline">Trailer</span>
+                    </a>
+                </div>
+
+             </div>
+            
+            <!-- Decorations -->
+            <div class="hidden md:block absolute -bottom-4 left-10 w-1 h-8 bg-stone-800 shadow-lg"></div>
+            <div class="hidden md:block absolute -bottom-4 right-20 w-1 h-8 bg-stone-800 shadow-lg"></div>
+        </nav>
+
+        <!-- Content Preview (Main Content) -->
+        <main class="w-full max-w-4xl text-center relative flex-grow flex flex-col items-center justify-start gap-12 pb-32 px-4">
+            
+            <!-- HERO SECTION -->
+            <section class="w-full flex flex-col items-center gap-6">
+                <!-- Dynamic Content Box (Hero Image Area) -->
+                <div id="content-box" class="w-full border-2 border-stone-800 bg-black rounded shadow-[0_0_30px_rgba(0,0,0,0.9)] overflow-hidden aspect-video flex items-center justify-center relative cursor-crosshair">
+                    
+                    <!-- Background Image (Extra Bright, no dark filters) -->
+                    <img src="Gemini_Generated_Image_xe31rsxe31rsxe31.png" alt="Featured Image" class="absolute inset-0 w-full h-full object-cover brightness-125 contrast-105">
+                    
+                    <!-- Subtle Overlays (Static only, no darkening filters) -->
+                    <div class="tv-static absolute inset-0 opacity-10 pointer-events-none"></div>
+
+                    <!-- Decorative UI Corners -->
+                    <div class="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-red-900/50"></div>
+                    <div class="absolute top-4 right-4 w-6 h-6 border-t-2 border-r-2 border-red-900/50"></div>
+                    <div class="absolute bottom-4 left-4 w-6 h-6 border-b-2 border-l-2 border-red-900/50"></div>
+                    <div class="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-red-900/50"></div>
+                </div>
+
+                <!-- Hero Title & Tagline -->
+                <div class="text-center space-y-3 max-w-2xl mt-2 px-4">
+                    <h2 class="font-horror text-3xl md:text-5xl text-red-700 drop-shadow-[0_0_10px_rgba(220,38,38,0.5)] tracking-widest">THE AWAKENING</h2>
+                    <p class="font-typewriter text-stone-400 text-sm md:text-base leading-relaxed font-bold tracking-widest uppercase">
+                        Some doors should never be opened.
+                    </p>
+                </div>
+            </section>
+
+            <!-- NEW: Vault / Image Gallery Section -->
+            <div class="w-full text-left space-y-8 mt-4 z-10 relative">
+                <div class="flex flex-col items-center gap-2">
+                    <div class="flex items-center gap-4 w-full">
+                        <div class="h-px flex-grow bg-gradient-to-r from-transparent to-red-900"></div>
+                        <h3 class="text-red-800 font-horror text-2xl md:text-3xl tracking-widest uppercase title-flicker whitespace-nowrap">School Records</h3>
+                        <div class="h-px flex-grow bg-gradient-to-l from-transparent to-red-900"></div>
+                    </div>
+                </div>
+
+                <!-- 3 Lead Actors Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 p-4 mt-8">
+                    
+                    <!-- Actor 1 -->
+                    <div class="relative group transform md:-rotate-2 hover:rotate-0 transition-all duration-500 cursor-crosshair">
+                        <div class="absolute inset-0 bg-red-900/20 blur-md group-hover:bg-red-600/40 transition-colors"></div>
+                        <div class="border-4 border-stone-900 bg-stone-900 p-2 relative shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                            <img src="SOR ALIICE - 2.png" alt="Lead Actor 1" class="w-full h-auto object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700 aspect-[3/4]">
+                            <div class="absolute bottom-4 right-4 bg-black/90 px-3 py-1 border border-red-900/50 font-typewriter text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity shadow-[0_0_10px_rgba(220,38,38,0.5)]">SUBJECT_01.DAT</div>
+                        </div>
+                        <div class="text-center mt-6">
+                            <h4 class="font-horror text-red-700 text-lg tracking-widest mb-1 glitch-text" data-text="Actor Name">Actor Name</h4>
+                            <p class="font-typewriter text-stone-500 text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                                <i data-lucide="user" class="w-3 h-3 text-red-800"></i> Role: Character 1
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Actor 2 (Middle - slightly offset downwards) -->
+                    <div class="relative group transform hover:-translate-y-2 transition-all duration-500 cursor-crosshair md:mt-12">
+                        <div class="absolute inset-0 bg-red-900/20 blur-md group-hover:bg-red-600/40 transition-colors"></div>
+                        <div class="border-4 border-stone-900 bg-stone-900 p-2 relative shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                            <img src="SOR ALIICE - 3.png" alt="Lead Actor 2" class="w-full h-auto object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700 aspect-[3/4]">
+                            <div class="absolute top-4 left-4 bg-black/90 px-3 py-1 border border-red-900/50 font-typewriter text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity shadow-[0_0_10px_rgba(220,38,38,0.5)] flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></div> SUBJECT_02
+                            </div>
+                        </div>
+                        <div class="text-center mt-6">
+                            <h4 class="font-horror text-red-700 text-lg tracking-widest mb-1 glitch-text" data-text="Actor Name">Actor Name</h4>
+                            <p class="font-typewriter text-stone-500 text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                                <i data-lucide="user" class="w-3 h-3 text-red-800"></i> Role: Character 2
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Actor 3 -->
+                    <div class="relative group transform md:rotate-2 hover:rotate-0 transition-all duration-500 cursor-crosshair">
+                        <div class="absolute inset-0 bg-red-900/20 blur-md group-hover:bg-red-600/40 transition-colors"></div>
+                        <div class="border-4 border-stone-900 bg-stone-900 p-2 relative shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                            <img src="SOR ALIICE - 4.png" alt="Lead Actor 3" class="w-full h-auto object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700 aspect-[3/4]">
+                             <div class="absolute bottom-4 left-4 bg-black/90 px-3 py-1 border border-red-900/50 font-typewriter text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity shadow-[0_0_10px_rgba(220,38,38,0.5)] uppercase">SUBJECT_03.DAT</div>
+                        </div>
+                        <div class="text-center mt-6">
+                            <h4 class="font-horror text-red-700 text-lg tracking-widest mb-1 glitch-text" data-text="Actor Name">Actor Name</h4>
+                            <p class="font-typewriter text-stone-500 text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                                <i data-lucide="user" class="w-3 h-3 text-red-800"></i> Role: Character 3
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Divider -->
+                <div class="h-px w-full bg-gradient-to-r from-transparent via-red-900 to-transparent mt-12 mb-16"></div>
+
+                <!-- NEW: MOVIE POSTER & DESCRIPTION -->
+                <div class="flex flex-col items-center gap-2 mb-8">
+                    <div class="flex items-center gap-4 w-full">
+                        <div class="h-px flex-grow bg-gradient-to-r from-transparent to-red-900"></div>
+                        <h3 class="text-red-800 font-horror text-2xl md:text-3xl tracking-widest uppercase title-flicker whitespace-nowrap">The Archive</h3>
+                        <div class="h-px flex-grow bg-gradient-to-l from-transparent to-red-900"></div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-8 bg-black/80 border border-stone-800 p-6 md:p-8 rounded shadow-[0_0_30px_rgba(0,0,0,0.9)] backdrop-blur-md relative overflow-hidden mx-4 md:mx-0">
+                    <!-- Static noise overlay for the box -->
+                    <div class="tv-static absolute inset-0 opacity-[0.15] pointer-events-none"></div>
+                    
+                    <!-- Left: Movie Poster -->
+                    <div class="w-full md:w-1/3 flex-shrink-0 relative z-10 group cursor-crosshair">
+                        <div class="absolute inset-0 bg-red-900/20 blur-xl group-hover:bg-red-600/40 transition-colors duration-700"></div>
+                        <div class="border-2 border-stone-800 p-2 bg-stone-900 shadow-[0_0_20px_rgba(0,0,0,0.9)] relative">
+                            <!-- You can replace this src with your official movie poster -->
+                            <img src="SOR ALIICE (4).png" alt="Official Movie Poster" class="w-full h-auto object-cover aspect-[2/3] grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700">
+                        </div>
+                    </div>
+
+                    <!-- Right: Description & Meta Info -->
+                    <div class="w-full md:w-2/3 flex flex-col justify-center gap-4 relative z-10">
+                        <h4 class="font-horror text-red-600 text-3xl md:text-4xl tracking-widest drop-shadow-[0_0_10px_rgba(220,38,38,0.5)]">EERIE</h4>
+                        
+                        <div class="font-typewriter text-red-900 text-xs font-bold uppercase tracking-[0.2em] mb-2 border-b border-red-900/30 pb-3 inline-block w-fit">
+                            Status: Classified // Case #1998-ER
+                        </div>
+                        
+                        <p class="font-typewriter text-stone-400 text-sm leading-relaxed mb-4 text-justify">
+                            In 1998, a series of unexplained events forced the Erikan Community School to permanently close its doors. Decades later, a group of urban explorers venture into the abandoned halls, only to discover that the school isn't as empty as it seems. The echoes of the past have awakened, and they are hungry.
+                        </p>
+                        
+                        <!-- Metadata Grid -->
+                        <div class="grid grid-cols-2 gap-y-4 gap-x-2 font-typewriter text-xs text-stone-500 mt-auto bg-stone-900/50 p-4 border border-stone-800 rounded">
+                            <div>
+                                <span class="text-red-800 font-bold block mb-1">Director:</span>
+                                <span class="uppercase tracking-widest text-stone-300">Classified</span>
+                            </div>
+                            <div>
+                                <span class="text-red-800 font-bold block mb-1">Release Date:</span>
+                                <span class="uppercase tracking-widest text-stone-300">Oct 31, 2026</span>
+                            </div>
+                            <div>
+                                <span class="text-red-800 font-bold block mb-1">Runtime:</span>
+                                <span class="uppercase tracking-widest text-stone-300">1h 45m</span>
+                            </div>
+                            <div>
+                                <span class="text-red-800 font-bold block mb-1">Rating:</span>
+                                <span class="border border-stone-600 px-2 py-0.5 rounded text-stone-300 shadow-[0_0_5px_rgba(255,255,255,0.1)]">R</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Footer Section (Full Width & Bottom Anchored) -->
+        <footer class="bg-black w-full border-t border-neutral-900 mt-auto relative z-20">
+            <div class="py-16 pb-32 md:pb-16 px-6 md:px-12 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-8 gap-12 lg:gap-8">
+                
+                <!-- Column 1: Brand & Socials -->
+                <div class="md:col-span-5 pr-0 md:pr-12">
+                    <h2 class="text-[#E60000] text-3xl tracking-wider mb-4 uppercase font-horror">
+                        Eerie
+                    </h2>
+                    <p class="text-stone-400 text-sm leading-relaxed mb-6 font-typewriter">
+                        Experience the chills and thrills of Silentecho Production's masterpiece. Dive deep into the mystery that haunts the halls.
+                    </p>
+                    
+                    <!-- Social Icons -->
+                    <div class="flex gap-3">
+                        <a href="https://www.youtube.com/" class="w-10 h-10 rounded-full bg-[#111] border border-stone-800 flex items-center justify-center hover:bg-red-900/30 hover:border-red-900 transition-colors group cursor-crosshair">
+                            <svg class="w-4 h-4 text-stone-500 group-hover:text-red-500 transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.facebook.com/" class="w-10 h-10 rounded-full bg-[#111] border border-stone-800 flex items-center justify-center hover:bg-red-900/30 hover:border-red-900 transition-colors group cursor-crosshair">
+                            <svg class="w-4 h-4 text-stone-500 group-hover:text-red-500 transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.tiktok.com/" class="w-10 h-10 rounded-full bg-[#111] border border-stone-800 flex items-center justify-center hover:bg-red-900/30 hover:border-red-900 transition-colors group cursor-crosshair">
+                            <svg class="w-4 h-4 text-stone-500 group-hover:text-red-500 transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93v7.2c0 1.96-.5 3.96-1.8 5.36-1.5 1.62-3.8 2.22-5.95 1.83-2.14-.38-3.95-1.72-4.88-3.66-.9-1.87-.93-4.14-.05-6.04.93-2.02 2.8-3.4 5-3.81 1.05-.2 2.1-.18 3.14.05v4.22c-.6-.17-1.24-.22-1.86-.1-.6.13-1.16.45-1.56.93-.45.55-.65 1.28-.55 2 .1.7.5 1.34 1.1 1.72.6.38 1.35.48 2.05.34.7-.14 1.3-.54 1.7-1.13.4-.58.6-1.3.56-2.03l.03-15.03z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Explore Links -->
+                <div class="md:col-span-3">
+                    <h3 class="text-white text-lg font-bold mb-5 tracking-wide font-typewriter">
+                        Explore
+                    </h3>
+                    <ul class="space-y-3.5 font-typewriter">
+                        <li><a href="story.html" class="text-stone-400 hover:text-red-500 transition-colors text-sm uppercase tracking-widest cursor-crosshair">Story</a></li>
+                        <li><a href="M&R.html" class="text-stone-400 hover:text-red-500 transition-colors text-sm uppercase tracking-widest cursor-crosshair">Cast & Crew</a></li>
+                        <li><a href="behindscene.html" class="text-stone-400 hover:text-red-500 transition-colors text-sm uppercase tracking-widest cursor-crosshair">Behind the Scenes</a></li>
+                        <li><a href="teaser.html" class="text-stone-400 hover:text-red-500 transition-colors text-sm uppercase tracking-widest cursor-crosshair">Teaser</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </footer>
+    </div> <!-- Close the min-h-screen wrapper if it exists here -->
+
+    <!-- Mobile Bottom Navigation (Floating Pill Design) -->
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-[400px] z-50 md:hidden pb-safe">
+        <div class="bg-[#0f0f0f]/95 backdrop-blur-xl border border-stone-800 rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.9)] relative flex justify-between items-center px-4 h-[72px]">
+            
+            <!-- Items Left -->
+            <div class="flex w-[42%] justify-around">
+                <!-- Teaser -->
+                <a href="teaser.html" class="flex flex-col items-center justify-center gap-1.5 text-stone-500 hover:text-stone-300 transition-colors w-12">
+                    <i data-lucide="eye" class="w-[20px] h-[20px]"></i>
+                    <span class="font-typewriter text-[9px] tracking-widest uppercase">Teaser</span>
+                </a>
+                
+                <!-- M&R -->
+                <a href="M&R.html" class="flex flex-col items-center justify-center gap-1.5 text-stone-500 hover:text-stone-300 transition-colors w-12">
+                    <i data-lucide="skull" class="w-[20px] h-[20px]"></i>
+                    <span class="font-typewriter text-[9px] tracking-widest uppercase">M&R</span>
+                </a>
+            </div>
+
+            <!-- Center Floating Button (Home - Active) -->
+            <div class="absolute left-1/2 -translate-x-1/2 -top-6">
+                <a href="home.html" class="flex items-center justify-center w-[76px] h-[76px] rounded-full relative group z-10">
+                    <!-- Cutout background (black to match body and break the pill) -->
+                    <div class="absolute inset-0 bg-black rounded-full"></div>
+                    <!-- Red glowing ring -->
+                    <div class="absolute inset-[5px] rounded-full border-[1.5px] border-red-600 shadow-[0_0_20px_rgba(220,38,38,0.5),inset_0_0_15px_rgba(220,38,38,0.2)] flex items-center justify-center bg-[#050505] transition-transform duration-300 group-hover:scale-105">
+                        <i data-lucide="home" class="w-6 h-6 text-red-500 transition-colors drop-shadow-[0_0_12px_rgba(220,38,38,0.8)]"></i>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Items Right -->
+            <div class="flex w-[42%] justify-around">
+                <!-- Story Board -->
+                <a href="story.html" class="flex flex-col items-center justify-center gap-1.5 text-stone-500 hover:text-stone-300 transition-colors w-12">
+                    <i data-lucide="book-open" class="w-[20px] h-[20px]"></i>
+                    <span class="font-typewriter text-[9px] tracking-widest uppercase">Story</span>
+                </a>
+                
+                <!-- Behind the Scene -->
+                <a href="behindscene.html" class="flex flex-col items-center justify-center gap-1.5 text-stone-500 hover:text-stone-300 transition-colors w-12">
+                    <i data-lucide="map" class="w-[20px] h-[20px]"></i>
+                    <span class="font-typewriter text-[9px] tracking-widest uppercase">Behind</span>
+                </a>
+            </div>
+            
+        </div>
+    </nav>
+
+    <!-- Logic Script -->
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Sticky Nav Shrink Logic
+        const nav = document.getElementById('sticky-nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                nav.classList.add('scrolled-nav');
+            } else {
+                nav.classList.remove('scrolled-nav');
+            }
+        });
+
+        // Current Active Page Variable
+        let activeId = 'home';
+
+        // Flashlight Effect
+        const flashlight = document.getElementById('flashlight');
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            flashlight.style.background = `radial-gradient(circle 1000px at ${x}px ${y}px, transparent 20%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.4) 85%)`;
+        });
+
+        // Random Flicker Effect
+        setInterval(() => {
+            if (Math.random() > 0.85) { 
+                document.body.classList.add('flicker-mode');
+                
+                if (activeId === 'escape') {
+                    const activeBtn = document.getElementById('btn-escape');
+                    const span = activeBtn ? activeBtn.querySelector('span') : null;
+                    if(span) span.classList.add('glitch-text');
+                }
+
+                setTimeout(() => {
+                    document.body.classList.remove('flicker-mode');
+                    
+                    if (activeId === 'escape') {
+                        const activeBtn = document.getElementById('btn-escape');
+                        const span = activeBtn ? activeBtn.querySelector('span') : null;
+                        if(span) span.classList.remove('glitch-text');
+                    }
+                }, 50 + Math.random() * 150);
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
